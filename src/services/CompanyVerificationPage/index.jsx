@@ -24,73 +24,51 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import MDFormField from "../../components/MDFormField";
 import DashboardLayout from "../../pages/dashboardLayout";
 
-// API Manager
-import apiMgr from "../../api/apiMgr";
+// Redux
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { verifyCompany } from "../../redux/thunks/registrationThunks";
+import { clearError } from "../../redux/slices/registrationSlice";
+import {
+  selectIsLoading,
+  selectError,
+  selectCompanyName,
+} from "../../redux/selectors/registrationSelectors";
+
+const step1ValidationSchema = Yup.object({
+  companyName: Yup.string()
+    .min(3, "Name must be at least 3 characters")
+    .required("Company Name is required"),
+  companyPassword: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Company Password is required"),
+});
 
 export default function CompanyVerificationPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = useAppSelector(selectIsLoading);
+  const apiError = useAppSelector(selectError);
+  const companyName = useAppSelector(selectCompanyName);
+
   const [showPassword, setShowPassword] = useState(false);
-  const [apiError, setApiError] = useState("");
 
-  const step1ValidationSchema = Yup.object({
-    companyName: Yup.string()
-      .min(3, "Name must be at least 3 characters")
-      .required("Company Name is required"),
+const handleStep1Submit = async (values) => {
+  try {
+    const result = await dispatch(
+      verifyCompany({
+        company_name: values.companyName,
+        password: values.companyPassword,
+      })
+    ).unwrap();
 
-    companyPassword: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Company Password is required"),
-  });
+    console.log("SUCCESS:", result);
 
-  const handleStep1Submit = async (values) => {
-    setIsLoading(true);
-    setApiError("");
-
-    try {
-      const payload = {
-        companyName: values.companyName,
-        companyPassword: values.companyPassword,
-      };
-
-      const response = await apiMgr.verifyCompany(payload);
-
-      if (
-        response &&
-        (response.status === false || response.success === false)
-      ) {
-        throw new Error(
-          response.message || "Invalid Company Name or Password."
-        );
-      }
-
-      // Store in session storage
-      sessionStorage.setItem(
-        "registration_company_name",
-        values.companyName
-      );
-
-      sessionStorage.setItem(
-        "registration_company_password",
-        values.companyPassword
-      );
-
-      // Navigate next page
-      navigate("/register/user-details-verification");
-    } catch (error) {
-      console.error("verifyCompany error:", error);
-
-      const errorMsg =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Verification failed. Please check Company Name and Password.";
-
-      setApiError(errorMsg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    navigate("/register/user-details-verification");
+  } catch (err) {
+    console.log("ERROR:", err);
+  }
+};
 
   return (
     <DashboardLayout>
@@ -131,7 +109,7 @@ export default function CompanyVerificationPage() {
               fontSize: "0.825rem",
               fontWeight: 500,
             }}
-            onClose={() => setApiError("")}
+            onClose={() => dispatch(clearError())}
           >
             {apiError}
           </Alert>
@@ -139,13 +117,8 @@ export default function CompanyVerificationPage() {
 
         <Formik
           initialValues={{
-            companyName:
-              sessionStorage.getItem("registration_company_name") || "",
-
-            companyPassword:
-              sessionStorage.getItem(
-                "registration_company_password"
-              ) || "",
+            companyName: companyName || "",
+            companyPassword: "",
           }}
           validationSchema={step1ValidationSchema}
           onSubmit={handleStep1Submit}
@@ -154,8 +127,7 @@ export default function CompanyVerificationPage() {
           {({ isValid, dirty, values }) => {
             const canSubmit =
               isValid &&
-              (dirty ||
-                (values.companyName && values.companyPassword));
+              (dirty || (values.companyName && values.companyPassword));
 
             return (
               <Form>
@@ -176,53 +148,30 @@ export default function CompanyVerificationPage() {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          onClick={() =>
-                            setShowPassword(!showPassword)
-                          }
+                          onClick={() => setShowPassword(!showPassword)}
                           edge="end"
                           sx={{
                             color: "#D2686E",
                             opacity: 0.7,
-                            "&:hover": {
-                              opacity: 1,
-                            },
+                            "&:hover": { opacity: 1 },
                           }}
                         >
-                          {showPassword ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
                         </IconButton>
                       </InputAdornment>
                     ),
                   }}
                 />
 
-                <Divider
-                  sx={{
-                    borderColor: "#F1F5F9",
-                    my: 3,
-                  }}
-                />
+                <Divider sx={{ borderColor: "#F1F5F9", my: 3 }} />
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <MDLoadingButton
                     type="submit"
                     variant="contained"
                     loading={isLoading}
                     disabled={!canSubmit}
-                    sx={{
-                      width: "100%",
-                      maxWidth: "190px",
-                      py: 1.25,
-                      px: 3,
-                    }}
+                    sx={{ width: "100%", maxWidth: "190px", py: 1.25, px: 3 }}
                   >
                     Next
                   </MDLoadingButton>

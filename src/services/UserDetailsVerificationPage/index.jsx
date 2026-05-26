@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -12,82 +12,64 @@ import MDLoadingButton from "../../components/MDLoadingButton";
 import MDFormField from "../../components/MDFormField";
 import DashboardLayout from "../../pages/dashboardLayout";
 
-// Import API manager from centralized api folder
-import apiMgr from "../../api/apiMgr";
+// Redux
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { saveUserDetails } from "../../redux/thunks/registrationThunks";
+import { clearError } from "../../redux/slices/registrationSlice";
+import {
+  selectIsLoading,
+  selectError,
+  selectCompanyName,
+  selectEmail,
+  selectFirstName,
+  selectLastName,
+  selectCompanyId,
+} from "../../redux/selectors/registrationSelectors";
+
+const userDetailsValidationSchema = Yup.object().shape({
+  emailId: Yup.string()
+    .email("Please refer to a valid email format")
+    .required("Email ID is required"),
+  firstName: Yup.string()
+    .matches(
+      /^[a-zA-Z\s]+$/,
+      "First name cannot contain numbers or special characters",
+    )
+    .required("First name is required"),
+  lastName: Yup.string()
+    .matches(
+      /^[a-zA-Z\s]+$/,
+      "Last name cannot contain numbers or special characters",
+    )
+    .required("Last name is required"),
+});
 
 export default function UserDetailsVerificationPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState("");
-  const [companyName, setCompanyName] = useState("");
+  const isLoading = useAppSelector(selectIsLoading);
+  const apiError = useAppSelector(selectError);
+  const companyName = useAppSelector(selectCompanyName);
+  const companyId = useAppSelector(selectCompanyId);
 
-  useEffect(() => {
-    const storedName = sessionStorage.getItem("registration_company_name");
-
-    if (!storedName) {
-      // Missing required company info -> Redirect back to stage 1
-      navigate("/register/company-verification", {
-        replace: true,
-      });
-    } else {
-      setCompanyName(storedName);
-    }
-  }, [navigate]);
-
-  const userDetailsValidationSchema = Yup.object().shape({
-    emailId: Yup.string()
-      .email("Please refer to a valid email format")
-      .required("Email ID is required"),
-
-    firstName: Yup.string().required("First name is required"),
-
-    lastName: Yup.string().required("Last name is required"),
-  });
+  const email = useAppSelector(selectEmail);
+  const firstName = useAppSelector(selectFirstName);
+  const lastName = useAppSelector(selectLastName);
 
   const handleUserDetailsSubmit = async (values) => {
-    setIsLoading(true);
-    setApiError("");
+    const result = await dispatch(
+      saveUserDetails({
+        company_id: companyId,
+        mail: values.emailId,
+        fname: values.firstName,
+        lname: values.lastName,
+      }),
+    ).unwrap();
 
-    try {
-      const payload = {
-        emailId: values.emailId,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        companyName: companyName,
-      };
+    console.log("SUCCESS:", result);
 
-      const response = await apiMgr.saveUserDetails(payload);
-
-      // Handle custom API failure response structures gracefully
-      if (
-        response &&
-        (response.status === false || response.success === false)
-      ) {
-        throw new Error(response.message || "Failed to save user details.");
-      }
-
-      // Save user details for OTP page and final step
-      sessionStorage.setItem("registration_email_id", values.emailId);
-
-      sessionStorage.setItem("registration_first_name", values.firstName);
-
-      sessionStorage.setItem("registration_last_name", values.lastName);
-
-      // Navigate to OTP verification page
-      navigate("/register/otp-verification");
-    } catch (error) {
-      console.error("saveUserDetails error:", error);
-
-      const errorMsg =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Failed to verify details. Please try again.";
-
-      setApiError(errorMsg);
-    } finally {
-      setIsLoading(false);
-    }
+    navigate("/register/otp-verification");
   };
 
   return (
@@ -133,12 +115,9 @@ export default function UserDetailsVerificationPage() {
               backgroundColor: "rgba(254, 226, 226, 0.9)",
               color: "#991B1B",
               border: "1px solid rgba(239, 68, 68, 0.2)",
-
-              "& .MuiAlert-icon": {
-                color: "#EF4444",
-              },
+              "& .MuiAlert-icon": { color: "#EF4444" },
             }}
-            onClose={() => setApiError("")}
+            onClose={() => dispatch(clearError())}
           >
             {apiError}
           </Alert>
@@ -146,10 +125,10 @@ export default function UserDetailsVerificationPage() {
 
         <Formik
           initialValues={{
-            emailId: "",
-            firstName: "",
-            lastName: "",
-            companyName: companyName,
+            emailId: email || "",
+            firstName: firstName || "",
+            lastName: lastName || "",
+            companyName: companyName || "",
           }}
           validationSchema={userDetailsValidationSchema}
           onSubmit={handleUserDetailsSubmit}
@@ -187,25 +166,18 @@ export default function UserDetailsVerificationPage() {
                 <MDFormField
                   label="Company name"
                   name="companyName"
-                  disabled={true}
+                  disabled
                   value={companyName}
                   required
                 />
 
                 <Divider
-                  sx={{
-                    borderColor: "#F1F5F9",
-                    borderBottomWidth: 1,
-                    my: 3,
-                  }}
+                  sx={{ borderColor: "#F1F5F9", borderBottomWidth: 1, my: 3 }}
                 />
 
                 <Box
                   id="action-btn-row"
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
+                  sx={{ display: "flex", justifyContent: "center" }}
                 >
                   <MDLoadingButton
                     type="submit"
@@ -213,12 +185,7 @@ export default function UserDetailsVerificationPage() {
                     loading={isLoading}
                     disabled={!canSubmit}
                     id="registration-submit-button"
-                    sx={{
-                      width: "100%",
-                      maxWidth: "190px",
-                      py: 1.25,
-                      px: 3,
-                    }}
+                    sx={{ width: "100%", maxWidth: "190px", py: 1.25, px: 3 }}
                   >
                     Verify email
                   </MDLoadingButton>

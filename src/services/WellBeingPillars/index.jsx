@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Box, Grid, CircularProgress } from "@mui/material";
 
-// Components from your project
 import DashboardLayout from "../../pages/dashboardLayout";
 import MDTypography from "../../components/MDTypography";
 import MDButton from "../../components/MDButton";
-import apiMgr from "@/src/api/apiMgr";
+
+// Redux
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { fetchPillars } from "../../redux/thunks/lookupThunks";
+import {
+  selectPillars,
+  selectPillarsLoading,
+  selectSelectedPillarIds,
+} from "../../redux/selectors/pillarSelectors";
+import { setSelectedPillarIds } from "../../redux/slices/pillarSlice";
 
 const COLORS = {
   primaryRed: "#D2686E",
@@ -16,31 +24,30 @@ const COLORS = {
 };
 
 const WellbeingPillars = () => {
-  const [pillars, setPillars] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const pillars = useAppSelector(selectPillars) || [];
+  const isLoading = useAppSelector(selectPillarsLoading);
+  const selectedIds = useAppSelector(selectSelectedPillarIds);
 
   useEffect(() => {
-    const fetchPillars = async () => {
-      try {
-        setIsLoading(true);
-        const response = await apiMgr.getWellbeingPillars(1);
-        setPillars(response?.data || []);
-      } catch (err) {
-        console.error("API Error:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchPillars();
-  }, []);
+    dispatch(fetchPillars(1));
+  }, [dispatch]);
 
   const handleSelect = (id) => {
-    setSelectedIds((prev) => {
-      if (prev.includes(id)) return prev.filter((i) => i !== id);
-      if (prev.length < 3) return [...prev, id];
-      return prev;
-    });
+    let updated = [];
+    if (selectedIds.includes(id)) {
+      updated = selectedIds.filter((item) => item !== id);
+    } else {
+      if (selectedIds.length >= 3) return;
+      updated = [...selectedIds, id];
+    }
+    dispatch(setSelectedPillarIds(updated));
+  };
+
+  const handleDone = () => {
+    if (selectedIds.length !== 3) return;
+    console.log("Proceeding with:", selectedIds);
   };
 
   return (
@@ -56,7 +63,6 @@ const WellbeingPillars = () => {
           mx: "auto",
         }}
       >
-        {/* Header Section */}
         <Box sx={{ mb: 6, textAlign: "center" }}>
           <MDTypography
             variant="h5"
@@ -71,15 +77,7 @@ const WellbeingPillars = () => {
             <CircularProgress sx={{ color: COLORS.primaryRed }} />
           </Box>
         ) : (
-          <Grid
-            container
-            spacing={2}
-            sx={{
-              width: "100%",
-              margin: 0, // Prevents negative margin horizontal scroll issues
-              alignItems: "stretch",
-            }}
-          >
+          <Grid container spacing={2} alignItems="stretch">
             {pillars.map((item) => {
               const selectedIndex = selectedIds.indexOf(item.id);
               const isSelected = selectedIndex !== -1;
@@ -87,19 +85,18 @@ const WellbeingPillars = () => {
               return (
                 <Grid
                   item
-                  key={item.id}
                   xs={12}
                   sm={6}
                   md={4}
-                  sx={{ display: "flex" }} // Rule 1: Allow child to fill height
+                  key={item.id}
+                  sx={{ display: "flex" }}
                 >
                   <Box
                     onClick={() => handleSelect(item.id)}
                     sx={{
                       display: "flex",
                       flexDirection: "row",
-                      flex: 1, // Rule 2: Force child to consume all Grid space
-                      height: "100%", // Rule 3: Maintain row height consistency
+                      flex: 1, // Forces card to fill the Grid column height
                       alignItems: "flex-start",
                       gap: 2,
                       p: 2.5,
@@ -117,12 +114,12 @@ const WellbeingPillars = () => {
                       },
                     }}
                   >
-                    {/* Rank Box */}
+                    {/* Ranked Box (1, 2, 3) */}
                     <Box
                       sx={{
                         width: 22,
                         height: 22,
-                        mt: 0.4,
+                        mt: 0.3,
                         flexShrink: 0,
                         borderRadius: "4px",
                         border: isSelected ? "none" : "1.5px solid #CBD5E1",
@@ -145,7 +142,7 @@ const WellbeingPillars = () => {
                       )}
                     </Box>
 
-                    {/* Text Container */}
+                    {/* Text Area */}
                     <Box sx={{ flex: 1 }}>
                       <MDTypography
                         sx={{
@@ -153,7 +150,6 @@ const WellbeingPillars = () => {
                           color: COLORS.textDark,
                           fontWeight: 700,
                           mb: 0.5,
-                          lineHeight: 1.2,
                         }}
                       >
                         {item.pillar_title}
@@ -162,7 +158,7 @@ const WellbeingPillars = () => {
                         sx={{
                           fontSize: "0.75rem",
                           color: COLORS.textMuted,
-                          lineHeight: 1.5,
+                          lineHeight: 1.4,
                         }}
                       >
                         {item.description}
@@ -195,6 +191,10 @@ const WellbeingPillars = () => {
               px: 6,
               textTransform: "none",
               fontWeight: 600,
+              "&:hover": {
+                borderColor: "#BF5A60",
+                bgcolor: "rgba(210, 104, 110, 0.04)",
+              },
             }}
           >
             ‹ Back
@@ -202,6 +202,7 @@ const WellbeingPillars = () => {
           <MDButton
             variant="contained"
             disabled={selectedIds.length !== 3}
+            onClick={handleDone}
             sx={{
               bgcolor:
                 selectedIds.length === 3
@@ -212,7 +213,7 @@ const WellbeingPillars = () => {
                   ? "white !important"
                   : "#ADB5BD !important",
               borderRadius: "10px",
-              px: 6,
+              px: 8,
               boxShadow: "none",
               textTransform: "none",
               fontWeight: 600,
