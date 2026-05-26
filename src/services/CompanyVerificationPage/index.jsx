@@ -9,14 +9,12 @@ import {
   Paper,
   InputAdornment,
   IconButton,
-  CircularProgress,
   Divider,
   Alert,
 } from "@mui/material";
 
 // Generic Brand Components
 import MDTypography from "../../components/MDTypography";
-import MDButton from "../../components/MDButton";
 import MDLoadingButton from "../../components/MDLoadingButton";
 
 // MUI Icons
@@ -26,30 +24,30 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import MDFormField from "../../components/MDFormField";
 import DashboardLayout from "../../pages/dashboardLayout";
 
-// Import API manager from centralized api folder
+// API Manager
 import apiMgr from "../../api/apiMgr";
-
-// Import required custom asset
-import loaderScreenGif from "../../assets/Loader scrren GIF.mp4";
 
 export default function CompanyVerificationPage() {
   const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState("");
 
-  const step1ValidationSchema = Yup.object().shape({
+  const step1ValidationSchema = Yup.object({
     companyName: Yup.string()
       .min(3, "Name must be at least 3 characters")
       .required("Company Name is required"),
+
     companyPassword: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Company Password is required"),
   });
 
-  const handleStep1Submit = async (values: any) => {
+  const handleStep1Submit = async (values) => {
     setIsLoading(true);
     setApiError("");
+
     try {
       const payload = {
         companyName: values.companyName,
@@ -58,23 +56,36 @@ export default function CompanyVerificationPage() {
 
       const response = await apiMgr.verifyCompany(payload);
 
-      // Handle custom API failure response structures gracefully
-      if (response && (response.status === false || response.success === false)) {
-        throw new Error(response.message || "Invalid Company Name or Password.");
+      if (
+        response &&
+        (response.status === false || response.success === false)
+      ) {
+        throw new Error(
+          response.message || "Invalid Company Name or Password."
+        );
       }
 
-      // Persist in sessionStorage for user details verification step
-      sessionStorage.setItem("registration_company_name", values.companyName);
-      sessionStorage.setItem("registration_company_password", values.companyPassword);
+      // Store in session storage
+      sessionStorage.setItem(
+        "registration_company_name",
+        values.companyName
+      );
 
-      // Navigate to the next route
+      sessionStorage.setItem(
+        "registration_company_password",
+        values.companyPassword
+      );
+
+      // Navigate next page
       navigate("/register/user-details-verification");
-    } catch (error: any) {
+    } catch (error) {
       console.error("verifyCompany error:", error);
+
       const errorMsg =
-        error.response?.data?.message ||
-        error.message ||
+        error?.response?.data?.message ||
+        error?.message ||
         "Verification failed. Please check Company Name and Password.";
+
       setApiError(errorMsg);
     } finally {
       setIsLoading(false);
@@ -84,7 +95,6 @@ export default function CompanyVerificationPage() {
   return (
     <DashboardLayout>
       <Paper
-        id="registration-card-container"
         elevation={0}
         sx={{
           width: "100%",
@@ -92,16 +102,15 @@ export default function CompanyVerificationPage() {
           p: { xs: 4, md: 5 },
           borderRadius: "24px",
           border: "1px solid rgba(226, 232, 240, 0.8)",
-          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          backgroundColor: "rgba(255,255,255,0.95)",
           backdropFilter: "blur(12px)",
-          boxShadow: "0px 20px 50px rgba(26, 58, 95, 0.05)",
+          boxShadow: "0px 20px 50px rgba(26,58,95,0.05)",
           display: "flex",
           flexDirection: "column",
         }}
       >
         <MDTypography
           variant="h5"
-          id="registration-main-heading"
           sx={{
             color: "#1E3A5F",
             fontWeight: 700,
@@ -121,12 +130,6 @@ export default function CompanyVerificationPage() {
               borderRadius: "12px",
               fontSize: "0.825rem",
               fontWeight: 500,
-              backgroundColor: "rgba(254, 226, 226, 0.9)",
-              color: "#991B1B",
-              border: "1px solid rgba(239, 68, 68, 0.2)",
-              "& .MuiAlert-icon": {
-                color: "#EF4444",
-              },
             }}
             onClose={() => setApiError("")}
           >
@@ -136,19 +139,26 @@ export default function CompanyVerificationPage() {
 
         <Formik
           initialValues={{
-            companyName: sessionStorage.getItem("registration_company_name") || "",
-            companyPassword: sessionStorage.getItem("registration_company_password") || "",
+            companyName:
+              sessionStorage.getItem("registration_company_name") || "",
+
+            companyPassword:
+              sessionStorage.getItem(
+                "registration_company_password"
+              ) || "",
           }}
           validationSchema={step1ValidationSchema}
           onSubmit={handleStep1Submit}
           enableReinitialize
         >
-          {({ isValid, dirty, values }: any) => {
+          {({ isValid, dirty, values }) => {
             const canSubmit =
-              isValid && (dirty || (values.companyName && values.companyPassword));
+              isValid &&
+              (dirty ||
+                (values.companyName && values.companyPassword));
 
             return (
-              <Form id="registration-formik-wrap-step1">
+              <Form>
                 <MDFormField
                   label="Company Name"
                   name="companyName"
@@ -166,28 +176,37 @@ export default function CompanyVerificationPage() {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          id="toggle-password-visibility"
-                          onClick={() => setShowPassword(!showPassword)}
+                          onClick={() =>
+                            setShowPassword(!showPassword)
+                          }
                           edge="end"
                           sx={{
                             color: "#D2686E",
                             opacity: 0.7,
-                            "&:hover": { opacity: 1 },
+                            "&:hover": {
+                              opacity: 1,
+                            },
                           }}
                         >
-                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                          {showPassword ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),
                   }}
                 />
 
-                {/* Faint horizontal separator divider matching design theme */}
-                <Divider sx={{ borderColor: "#F1F5F9", borderBottomWidth: 1, my: 3 }} />
+                <Divider
+                  sx={{
+                    borderColor: "#F1F5F9",
+                    my: 3,
+                  }}
+                />
 
-                {/* Submit Action Button Row */}
                 <Box
-                  id="action-btn-row"
                   sx={{
                     display: "flex",
                     justifyContent: "center",
@@ -198,7 +217,6 @@ export default function CompanyVerificationPage() {
                     variant="contained"
                     loading={isLoading}
                     disabled={!canSubmit}
-                    id="registration-submit-button"
                     sx={{
                       width: "100%",
                       maxWidth: "190px",

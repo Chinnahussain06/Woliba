@@ -4,12 +4,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
 // MUI Core Components
-import {
-  Box,
-  Paper,
-  Divider,
-  Alert,
-} from "@mui/material";
+import { Box, Paper, Divider, Alert } from "@mui/material";
 
 // Generic Brand Components
 import MDTypography from "../../components/MDTypography";
@@ -22,16 +17,19 @@ import apiMgr from "../../api/apiMgr";
 
 export default function UserDetailsVerificationPage() {
   const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [apiError, setApiError] = useState("");
   const [companyName, setCompanyName] = useState("");
 
   useEffect(() => {
     const storedName = sessionStorage.getItem("registration_company_name");
+
     if (!storedName) {
       // Missing required company info -> Redirect back to stage 1
-      navigate("/register/company-verification", { replace: true });
+      navigate("/register/company-verification", {
+        replace: true,
+      });
     } else {
       setCompanyName(storedName);
     }
@@ -41,13 +39,16 @@ export default function UserDetailsVerificationPage() {
     emailId: Yup.string()
       .email("Please refer to a valid email format")
       .required("Email ID is required"),
+
     firstName: Yup.string().required("First name is required"),
+
     lastName: Yup.string().required("Last name is required"),
   });
 
-  const handleUserDetailsSubmit = async (values: any) => {
+  const handleUserDetailsSubmit = async (values) => {
     setIsLoading(true);
     setApiError("");
+
     try {
       const payload = {
         emailId: values.emailId,
@@ -59,23 +60,30 @@ export default function UserDetailsVerificationPage() {
       const response = await apiMgr.saveUserDetails(payload);
 
       // Handle custom API failure response structures gracefully
-      if (response && (response.status === false || response.success === false)) {
+      if (
+        response &&
+        (response.status === false || response.success === false)
+      ) {
         throw new Error(response.message || "Failed to save user details.");
       }
 
-      // Save user details for OTP page and the final step
+      // Save user details for OTP page and final step
       sessionStorage.setItem("registration_email_id", values.emailId);
+
       sessionStorage.setItem("registration_first_name", values.firstName);
+
       sessionStorage.setItem("registration_last_name", values.lastName);
 
       // Navigate to OTP verification page
       navigate("/register/otp-verification");
-    } catch (error: any) {
+    } catch (error) {
       console.error("saveUserDetails error:", error);
+
       const errorMsg =
-        error.response?.data?.message ||
-        error.message ||
+        error?.response?.data?.message ||
+        error?.message ||
         "Failed to verify details. Please try again.";
+
       setApiError(errorMsg);
     } finally {
       setIsLoading(false);
@@ -125,6 +133,7 @@ export default function UserDetailsVerificationPage() {
               backgroundColor: "rgba(254, 226, 226, 0.9)",
               color: "#991B1B",
               border: "1px solid rgba(239, 68, 68, 0.2)",
+
               "& .MuiAlert-icon": {
                 color: "#EF4444",
               },
@@ -146,10 +155,11 @@ export default function UserDetailsVerificationPage() {
           onSubmit={handleUserDetailsSubmit}
           enableReinitialize
         >
-          {({ isValid, dirty, values }: any) => {
+          {({ isValid, dirty, values }) => {
             const canSubmit =
               isValid &&
-              (dirty || (values.emailId && values.firstName && values.lastName));
+              (dirty ||
+                (values.emailId && values.firstName && values.lastName));
 
             return (
               <Form id="registration-formik-wrap">
@@ -182,10 +192,14 @@ export default function UserDetailsVerificationPage() {
                   required
                 />
 
-                {/* Faint horizontal separator divider matching design theme */}
-                <Divider sx={{ borderColor: "#F1F5F9", borderBottomWidth: 1, my: 3 }} />
+                <Divider
+                  sx={{
+                    borderColor: "#F1F5F9",
+                    borderBottomWidth: 1,
+                    my: 3,
+                  }}
+                />
 
-                {/* Submit Action Button Row */}
                 <Box
                   id="action-btn-row"
                   sx={{

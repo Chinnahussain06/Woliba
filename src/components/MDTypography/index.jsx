@@ -7,18 +7,12 @@ import Typography from "@mui/material/Typography";
  */
 export default function MDTypography({
   variant = "body1",
-  color,
+  color = "",
   sx = {},
   children,
   ...rest
 }) {
-  // Graceful color mapping depending on corporate themes:
-  // - primary/header: #1E3A5F
-  // - secondary/body: #475569
-  // - caption/muted: #94A3B8 or #5A6E85
   const getResolvedColor = () => {
-    if (color) return color;
-    
     switch (variant) {
       case "h1":
       case "h2":

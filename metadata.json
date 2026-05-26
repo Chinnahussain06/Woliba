@@ -1,6 +1,4 @@
 {
-  "name": "Personal Finance & Investment Dashboard",
-  "description": "Woliba corporate wellbeing registration experience, built with Formik validation, full-fidelity English/Spanish localization, animated media portal loader, and personalized dashboard stats.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "Woliba ",
+  "description": "Woliba  web application"
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { Field } from "formik";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import MDTypography from "./MDTypography";
+import MDTypography from "../MDTypography";
 
 /**
  * MDFormField: A highly reusable, generic Formik form field component
@@ -24,7 +24,7 @@ export default function MDFormField({
   return (
     <Field name={name}>
       {({ field, meta }) => {
-        // Support both explicit parent-passed error state and automatic Formik metadata
+      
         const hasError = error !== undefined ? error : !!(meta.touched && meta.error);
         const resolvedHelperText = helperText !== undefined 
           ? helperText 

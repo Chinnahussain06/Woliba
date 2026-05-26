@@ -8,6 +8,8 @@ import CompanyVerificationPage from "./services/CompanyVerificationPage";
 import UserDetailsVerificationPage from "./services/UserDetailsVerificationPage";
 import OtpVerificationPage from "./services/OtpVerificationPage";
 import LoginCredentialsPage from "./services/LoginCredentialsPage";
+import WellnessSelector from "./services/WellnessSelector";
+import WellbeingPillars from "./services/WellBeingPillars";
 
 // Elegantly styled Custom Woliba Light Material UI Theme
 const wolibaTheme = createTheme({
@@ -58,6 +60,8 @@ export default function App() {
             <Route path="/register/user-details-verification" element={<UserDetailsVerificationPage />} />
             <Route path="/register/otp-verification" element={<OtpVerificationPage />} />
             <Route path="/register/login-credentials" element={<LoginCredentialsPage />} />
+            <Route path="/wellness-selector" element={<WellnessSelector />} />
+            <Route path="/wellbeing-pillars" element={<WellbeingPillars />} />
             <Route path="*" element={<Navigate to="/register/company-verification" replace />} />
           </Routes>
         </Router>
