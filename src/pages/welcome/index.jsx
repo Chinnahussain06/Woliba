@@ -5,11 +5,19 @@ import { useNavigate } from "react-router-dom";
 import MDTypography from "@/src/components/MDTypography";
 import MDButton from "@/src/components/MDButton";
 
+// Redux
+import { useAppSelector } from "@/src/redux/hooks";
+import { selectFirstName, selectLastName } from "@/src/redux/selectors/registrationSelectors";
+
 const WelcomePage = () => {
   const navigate = useNavigate();
 
+  const firstName = useAppSelector(selectFirstName);
+  const lastName = useAppSelector(selectLastName);
+
   const user = {
-    firstName: "Shivani",
+    firstName,
+    lastName,
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Shivani",
   };
 
@@ -58,7 +66,7 @@ const WelcomePage = () => {
               mb: 2,
             }}
           >
-            Welcome {user.firstName}!
+            Welcome {user.firstName} {user.lastName}!
           </MDTypography>
 
           <MDTypography

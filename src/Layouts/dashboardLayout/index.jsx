@@ -82,12 +82,12 @@ export default function DashboardLayout({ children }) {
           <MDTypography
             sx={{
               fontFamily: "Inter, sans-serif",
-              fontSize: "1.1rem",
+              fontSize: "0.75rem",
               color: theme.palette.text.primary,
               display: "flex",
               alignItems: "center",
               gap: 1,
-              fontWeight: 500,
+              fontWeight: 400,
             }}
           >
             Language
@@ -104,7 +104,7 @@ export default function DashboardLayout({ children }) {
                 mx: 0.5,
               }}
             />
-            <span style={{ fontWeight: 600 }}>En</span>
+            <span style={{ fontWeight: 400 }}>En</span>
           </MDTypography>
 
           <KeyboardArrowDownIcon
