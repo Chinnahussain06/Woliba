@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { Box, Grid, CircularProgress } from "@mui/material";
 
-import DashboardLayout from "../../pages/dashboardLayout";
-import MDTypography from "../../components/MDTypography";
-import MDButton from "../../components/MDButton";
+import DashboardLayout from "@/src/Layouts/dashboardLayout";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -23,7 +22,9 @@ import {
 
 import { setSelectedPillarIds } from "../../redux/slices/pillarSlice";
 
-import Loader from "../../components/Loader";
+import MDLoader from "../../components/MDLoader";
+import MDTypography from "@/src/components/MDTypography";
+import MDButton from "@/src/components/MDButton";
 
 const COLORS = {
   primaryRed: "#D2686E",
@@ -65,7 +66,7 @@ const WellbeingPillars = () => {
 
   if (regLoading) {
     return (
-      <Loader text="Submitting registration..." sx={{ height: "100vh" }} />
+      <MDLoader text="Submitting registration..." sx={{ height: "100vh" }} />
     );
   }
 
@@ -204,13 +205,11 @@ const WellbeingPillars = () => {
         >
           <MDButton
             variant="outlined"
+            onClick={() => window.history.back()}
+            startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.75rem" }} />}
             sx={{
-              borderColor: COLORS.primaryRed,
-              color: COLORS.primaryRed,
-              borderRadius: "10px",
-              px: 6,
-              textTransform: "none",
-              fontWeight: 600,
+              width: "140px",
+              py: 1.25,
             }}
           >
             ‹ Back
@@ -220,19 +219,8 @@ const WellbeingPillars = () => {
             disabled={selectedIds.length !== 3}
             onClick={handleDone}
             sx={{
-              bgcolor:
-                selectedIds.length === 3
-                  ? COLORS.primaryRed
-                  : "#E9ECEF !important",
-              color:
-                selectedIds.length === 3
-                  ? "white !important"
-                  : "#ADB5BD !important",
-              borderRadius: "10px",
-              px: 8,
-              boxShadow: "none",
-              textTransform: "none",
-              fontWeight: 600,
+              width: "140px",
+              py: 1.25,
             }}
           >
             Done

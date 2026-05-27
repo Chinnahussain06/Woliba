@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
-import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
-// MUI Core Components
+// MUI
 import {
   Box,
   Paper,
@@ -13,16 +12,18 @@ import {
   Alert,
 } from "@mui/material";
 
-// Generic Brand Components
-import MDTypography from "../../components/MDTypography";
-import MDLoadingButton from "../../components/MDLoadingButton";
+// Icons
+import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
 
-// MUI Icons
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+// Theme
+import { palette } from "@/src/assets/theme/base/palette";
 
-import MDFormField from "../../components/MDFormField";
-import DashboardLayout from "../../pages/dashboardLayout";
+// Components
+import MDTypography from "@/src/components/MDTypography";
+import MDLoadingButton from "@/src/components/MDLoadingButton";
+import MDFormField from "@/src/components/MDFormField";
+import DashboardLayout from "@/src/Layouts/dashboardLayout";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -34,16 +35,11 @@ import {
   selectCompanyName,
 } from "../../redux/selectors/registrationSelectors";
 
-const step1ValidationSchema = Yup.object({
-  companyName: Yup.string()
-    .min(3, "Name must be at least 3 characters")
-    .required("Company Name is required"),
-  companyPassword: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Company Password is required"),
-});
+// Schema
+import { form, initialValues, companyValidations } from "./schema";
 
-export default function CompanyVerificationPage() {
+
+function CompanyVerification() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -53,22 +49,24 @@ export default function CompanyVerificationPage() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-const handleStep1Submit = async (values) => {
-  try {
-    const result = await dispatch(
-      verifyCompany({
-        company_name: values.companyName,
-        password: values.companyPassword,
-      })
-    ).unwrap();
+  const handleSubmit = async (values) => {
+    try {
+      await dispatch(
+        verifyCompany({
+          company_name: values.companyName,
+          password: values.companyPassword,
+        }),
+      ).unwrap();
 
-    console.log("SUCCESS:", result);
+      navigate("/register/user-details-verification");
+    } catch (err) {
+      console.log("ERROR:", err);
+    }
+  };
 
-    navigate("/register/user-details-verification");
-  } catch (err) {
-    console.log("ERROR:", err);
-  }
-};
+  const { formField } = form;
+  const { companyName: companyNameField, companyPassword: passwordField } =
+    formField;
 
   return (
     <DashboardLayout>
@@ -94,7 +92,6 @@ const handleStep1Submit = async (values) => {
             fontWeight: 700,
             textAlign: "center",
             mb: 4,
-            letterSpacing: "-0.025em",
           }}
         >
           Registration
@@ -103,12 +100,7 @@ const handleStep1Submit = async (values) => {
         {apiError && (
           <Alert
             severity="error"
-            sx={{
-              mb: 3,
-              borderRadius: "12px",
-              fontSize: "0.825rem",
-              fontWeight: 500,
-            }}
+            sx={{ mb: 3, borderRadius: "12px" }}
             onClose={() => dispatch(clearError())}
           >
             {apiError}
@@ -117,61 +109,54 @@ const handleStep1Submit = async (values) => {
 
         <Formik
           initialValues={{
+            ...initialValues,
             companyName: companyName || "",
-            companyPassword: "",
           }}
-          validationSchema={step1ValidationSchema}
-          onSubmit={handleStep1Submit}
+          validationSchema={companyValidations[0]}
+          onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ isValid, dirty, values }) => {
-            const canSubmit =
-              isValid &&
-              (dirty || (values.companyName && values.companyPassword));
-
+          {({ dirty, isSubmitting }) => {
             return (
               <Form>
                 <MDFormField
-                  label="Company Name"
-                  name="companyName"
-                  placeholder="Enter Company Name"
+                  label={companyNameField.label}
+                  name={companyNameField.name}
+                  placeholder={companyNameField.placeholder}
                   required
                 />
 
                 <MDFormField
-                  label="Company Password"
-                  name="companyPassword"
+                  label={passwordField.label}
+                  name={passwordField.name}
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter Company Password"
+                  placeholder={passwordField.placeholder}
                   required
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                          sx={{
-                            color: "#D2686E",
-                            opacity: 0.7,
-                            "&:hover": { opacity: 1 },
-                          }}
+                          sx={{ color: palette.primary.main}}
                         >
-                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                          {showPassword ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
                         </IconButton>
                       </InputAdornment>
                     ),
                   }}
                 />
 
-                <Divider sx={{ borderColor: "#F1F5F9", my: 3 }} />
+                <Divider sx={{ my: 3 }} />
 
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <MDLoadingButton
                     type="submit"
-                    variant="contained"
                     loading={isLoading}
-                    disabled={!canSubmit}
-                    sx={{ width: "100%", maxWidth: "190px", py: 1.25, px: 3 }}
+                    disabled={isSubmitting || !dirty}
+                    sx={{
+                      width: "100%",
+                      maxWidth: "190px",
+                    }}
                   >
                     Next
                   </MDLoadingButton>
@@ -184,3 +169,5 @@ const handleStep1Submit = async (values) => {
     </DashboardLayout>
   );
 }
+
+export default CompanyVerification;

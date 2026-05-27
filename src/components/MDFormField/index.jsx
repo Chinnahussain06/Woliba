@@ -2,13 +2,9 @@ import React from "react";
 import { Field } from "formik";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import MDTypography from "../MDTypography";
 
-/**
- * MDFormField: A highly reusable, generic Formik form field component
- * styled using Material-UI (MUI).
- * It features clean branding accents, validation support, and flexible props.
- */
 export default function MDFormField({
   label,
   name,
@@ -18,17 +14,24 @@ export default function MDFormField({
   value,
   error,
   helperText,
-  InputProps, // Destructure here to prevent it from going into ...rest and spreading
+  InputProps,
   ...rest
 }) {
+  const theme = useTheme();
+  const { palette } = theme;
+
   return (
     <Field name={name}>
       {({ field, meta }) => {
-      
-        const hasError = error !== undefined ? error : !!(meta.touched && meta.error);
-        const resolvedHelperText = helperText !== undefined 
-          ? helperText 
-          : (meta.touched && meta.error ? meta.error : null);
+        const hasError =
+          error !== undefined ? error : !!(meta.touched && meta.error);
+
+        const resolvedHelperText =
+          helperText !== undefined
+            ? helperText
+            : meta.touched && meta.error
+              ? meta.error
+              : null;
 
         return (
           <Box sx={{ mb: 2, textAlign: "left" }}>
@@ -38,16 +41,26 @@ export default function MDFormField({
                 htmlFor={name}
                 sx={{
                   display: "block",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  color: "#1E3A5F",
+                  fontSize: "1rem",
+                  fontWeight: 400,
+                  color: palette.text.primary,
                   mb: 0.75,
                 }}
               >
                 {label}
-                {required && <span style={{ color: "#d2686e", marginLeft: "4px" }}>*</span>}
+                {required && (
+                  <span
+                    style={{
+                      color: palette.primary.main,
+                      marginLeft: "4px",
+                    }}
+                  >
+                    *
+                  </span>
+                )}
               </MDTypography>
             )}
+
             <TextField
               {...field}
               {...rest}
@@ -57,48 +70,58 @@ export default function MDFormField({
               variant={variant}
               fullWidth
               error={hasError}
-              helperText={resolvedHelperText || " "} // Keep stable space for layout shifts
+              helperText={resolvedHelperText || " "}
               slotProps={{
                 formHelperText: {
                   sx: {
                     minHeight: "1.25rem",
-                    m: "3px 0 0", // Left-aligned with the text field box
+                    m: "3px 0 0",
                     fontSize: "0.75rem",
-                  }
+                    color: palette.text.secondary,
+                  },
                 },
                 input: {
-                  ...InputProps, // Merge any external input props (e.g. End Adornments)
+                  ...InputProps,
                   sx: {
                     borderRadius: "8px",
-                    backgroundColor: rest.disabled ? "#F8FAFC" : "#FFFFFF",
+                    backgroundColor: rest.disabled
+                      ? palette.background.default
+                      : palette.background.paper,
+
                     fontSize: "0.875rem",
-                    color: rest.disabled ? "#64748B" : "#1E3A5F",
+                    color: rest.disabled
+                      ? palette.text.secondary
+                      : palette.text.primary,
+
                     "& input::placeholder": {
-                      color: "#9EA9BA",
+                      color: palette.text.secondary,
                       opacity: 0.8,
                     },
+
                     "&.Mui-disabled": {
-                      color: "#64748B",
-                      WebkitTextFillColor: "#64748B",
-                      backgroundColor: "#F8FAFC",
+                      color: palette.text.secondary,
+                      WebkitTextFillColor: palette.text.secondary,
+                      backgroundColor: palette.background.default,
                     },
-                    ...(InputProps?.sx || {})
-                  }
-                }
+
+                    ...(InputProps?.sx || {}),
+                  },
+                },
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "#CBD5E1", // Light Gray / Silver Border
+                    borderColor: palette.divider,
                   },
                   "&:hover fieldset": {
-                    borderColor: "#A0AEC0",
+                    borderColor: palette.text.secondary,
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "#A0AEC0", // Simple border on focus to keep it elegant and continuous
+                    borderColor: palette.primary.dark,
                   },
                 },
-                ...(rest.sx || {})
+
+                ...(rest.sx || {}),
               }}
             />
           </Box>

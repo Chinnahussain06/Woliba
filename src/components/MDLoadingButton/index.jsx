@@ -1,7 +1,7 @@
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-
+import { useTheme } from "@mui/material/styles";
 import MDButton from "../MDButton";
 
 export default function MDLoadingButton({
@@ -10,16 +10,27 @@ export default function MDLoadingButton({
   disabled = false,
   children,
   startIcon = null,
+  variant = "contained",
   sx = {},
   ...rest
 }) {
+  const theme = useTheme();
+  const { palette } = theme;
+
   return (
     <MDButton
+      variant={variant}
       disabled={disabled || loading}
       startIcon={!loading ? startIcon : null}
       sx={{
         position: "relative",
         minHeight: "42px",
+
+        "&.Mui-disabled": {
+          backgroundColor: palette.action?.disabledBackground || "#EBEBEB",
+          color: palette.text?.disabled || "#A0AEC0",
+        },
+
         ...sx,
       }}
       {...rest}
@@ -38,7 +49,9 @@ export default function MDLoadingButton({
         >
           <CircularProgress
             size={20}
-            color="inherit"
+            sx={{
+              color: theme.palette.primary.main,
+            }}
           />
         </Box>
       )}

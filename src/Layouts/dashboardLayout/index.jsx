@@ -1,11 +1,11 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import MDTypography from "../../components/MDTypography";
-import MDButton from "../../components/MDButton";
 
-// Import required assets
-import wolibaLogo from "../../assets/woliba Logo.png";
-import backgroundImage from "../../assets/Background.png";
+import MDButton from "@/src/components/MDButton";
+import MDTypography from "@/src/components/MDTypography";
+
+import wolibaLogo from "@/src/assets/images/wolibaLogo.png";
+import backgroundImage from "@/src/assets/images/Background.png";
 
 export default function DashboardLayout({ children }) {
   return (
@@ -22,7 +22,6 @@ export default function DashboardLayout({ children }) {
         overflowX: "hidden",
       }}
     >
-      {/* Background illustration */}
       <Box
         id="lifestyle-bg-element"
         sx={{
@@ -39,7 +38,6 @@ export default function DashboardLayout({ children }) {
         }}
       />
 
-      {/* Header element overlay */}
       <Box
         component="header"
         id="woliba-header"
@@ -56,13 +54,11 @@ export default function DashboardLayout({ children }) {
           alignItems: "center",
         }}
       >
-        {/* Brand Logo */}
         <Box id="logo-wrapper" sx={{ display: "flex", alignItems: "center" }}>
           <Box
             component="img"
             src={wolibaLogo}
             alt="Woliba Logo"
-            id="woliba-logo-img"
             sx={{
               height: { xs: 36, md: 44 },
               width: "auto",
@@ -74,10 +70,11 @@ export default function DashboardLayout({ children }) {
           />
         </Box>
 
-        {/* Static Dummy Language Selector Button Matching Image 1 */}
-        <Box id="language-static-display" sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          id="language-static-display"
+          sx={{ display: "flex", alignItems: "center" }}
+        >
           <MDTypography
-            id="lang-selector-text"
             sx={{
               fontFamily: "Inter, sans-serif",
               fontSize: "1.1rem",
@@ -88,7 +85,7 @@ export default function DashboardLayout({ children }) {
               fontWeight: 500,
             }}
           >
-            Language{" "}
+            Language
             <Box
               component="img"
               src="https://flagcdn.com/w40/us.png"
@@ -98,21 +95,27 @@ export default function DashboardLayout({ children }) {
                 height: 16,
                 borderRadius: "4px",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
-                display: "inline-block",
                 objectFit: "cover",
-                verticalAlign: "middle",
                 mx: 0.5,
               }}
-            />{" "}
+            />
             <span style={{ fontWeight: 600 }}>En</span>
           </MDTypography>
-          <Box component="span" sx={{ color: "#D2686E", fontSize: "0.7rem", ml: 1, transform: "scaleY(0.85)" }}>
+
+          <Box
+            component="span"
+            sx={{
+              color: "#D2686E",
+              fontSize: "0.7rem",
+              ml: 1,
+              transform: "scaleY(0.85)",
+            }}
+          >
             ▼
           </Box>
         </Box>
       </Box>
 
-      {/* Main Container for active route views */}
       <Box
         component="main"
         id="main-content-row"
@@ -130,7 +133,6 @@ export default function DashboardLayout({ children }) {
         {children}
       </Box>
 
-      {/* Footer bar links */}
       <Box
         component="footer"
         id="woliba-footer-bar"
@@ -149,7 +151,6 @@ export default function DashboardLayout({ children }) {
         }}
       >
         <MDButton
-          id="terms-of-use-link"
           component="a"
           href="#/terms"
           onClick={(e) => e.preventDefault()}
@@ -162,8 +163,8 @@ export default function DashboardLayout({ children }) {
         >
           Terms of Use
         </MDButton>
+
         <MDButton
-          id="contact-us-link"
           component="a"
           href="#/contact"
           onClick={(e) => e.preventDefault()}

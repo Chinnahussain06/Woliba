@@ -1,9 +1,9 @@
 import React from "react";
-import { CircularProgress, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
-const Loader = ({ size = 80, text = "Loading ..." }) => {
-  const videoSrc = require("../../assets/loader_screen.mp4");
+const videoSrc = require("../../assets/loader_screen.mp4");
 
+const MDLoader = ({ size = 80, text = "Loading ..." }) => {
   return (
     <Grid
       container
@@ -33,4 +33,4 @@ const Loader = ({ size = 80, text = "Loading ..." }) => {
   );
 };
 
-export default Loader;
+export default MDLoader;

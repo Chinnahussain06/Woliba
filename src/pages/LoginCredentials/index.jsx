@@ -21,12 +21,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 
 // Components
-import MDButton from "../../components/MDButton";
 import MDFormField from "../../components/MDFormField";
 import MDLoadingButton from "../../components/MDLoadingButton";
-import MDTypography from "../../components/MDTypography";
-import DashboardLayout from "../../pages/dashboardLayout";
-import MDDateTimePicker from "@/src/components/DateTimePicker";
+import MDTypography from "@/src/components/MDTypography";
+import DashboardLayout from "../../Layouts/dashboardLayout";
+import MDDateTimePicker from "@/src/components/MDDateTimePicker";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -41,8 +40,9 @@ import {
 } from "../../redux/slices/registrationSlice";
 
 import { selectError } from "../../redux/selectors/registrationSelectors";
+import MDButton from "@/src/components/MDButton";
 
-export default function LoginCredentialsPage() {
+function LoginCredentials() {
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
@@ -335,28 +335,12 @@ export default function LoginCredentialsPage() {
                   <MDButton
                     variant="outlined"
                     onClick={() => navigate("/register/otp-verification")}
+                    startIcon={<ArrowBackIosNew sx={{ fontSize: "0.75rem" }} />}
                     sx={{
-                      width: "120px",
+                      width: "140px",
                       py: 1.25,
-                      borderColor: "#D2686E",
-                      color: "#D2686E",
-
-                      "&:hover": {
-                        borderColor: "#B15156",
-                        backgroundColor: "rgba(210,104,110,0.04)",
-                      },
-
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 1,
                     }}
                   >
-                    <ArrowBackIosNew
-                      sx={{
-                        fontSize: "0.75rem",
-                      }}
-                    />
                     Back
                   </MDButton>
 
@@ -381,3 +365,5 @@ export default function LoginCredentialsPage() {
     </DashboardLayout>
   );
 }
+
+export default LoginCredentials;

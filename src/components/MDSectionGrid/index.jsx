@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Box, Grid, CircularProgress } from "@mui/material";
 
 // Project specific components
-import DashboardLayout from "../../pages/dashboardLayout";
-import MDTypography from "../../components/MDTypography";
-import MDButton from "../../components/MDButton";
+import DashboardLayout from "../../Layouts/dashboardLayout";
+import MDTypography from "../Typography";
+import Button from "../Button";
 import apiMgr from "@/src/api/apiMgr";
 
 const COLORS = {
@@ -180,7 +180,7 @@ const WellbeingPillars = () => {
             gap: 2,
           }}
         >
-          <MDButton
+          <Button
             variant="outlined"
             sx={{
               borderColor: COLORS.primaryRed,
@@ -191,8 +191,8 @@ const WellbeingPillars = () => {
             }}
           >
             ‹ Back
-          </MDButton>
-          <MDButton
+          </Button>
+          <Button
             variant="contained"
             disabled={selectedIds.length !== 3}
             sx={{
@@ -211,7 +211,7 @@ const WellbeingPillars = () => {
             }}
           >
             Done
-          </MDButton>
+          </Button>
         </Box>
       </Box>
     </DashboardLayout>

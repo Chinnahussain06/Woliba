@@ -9,10 +9,7 @@ import {
 } from "@mui/material";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
-import DashboardLayout from "../../pages/dashboardLayout";
-import MDTypography from "../../components/MDTypography";
-import MDButton from "../../components/MDButton";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -27,6 +24,9 @@ import {
   selectSelectedInterests,
 } from "../../redux/selectors/interestSelectors";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "@/src/Layouts/dashboardLayout";
+import MDButton from "@/src/components/MDButton";
+import MDTypography from "@/src/components/MDTypography";
 
 const ASSET_BASE_URL = "https://api.woliba.io/storage/";
 const FALLBACK_ICON = "https://cdn-icons-png.flaticon.com/512/3048/3048398.png";
@@ -76,6 +76,10 @@ const WellnessSelector = () => {
 
     return map;
   }, [interests]);
+
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   const handleNext = () => {
     navigate("//wellbeing-pillars");
@@ -207,19 +211,35 @@ const WellnessSelector = () => {
           )}
         </Box>
 
-        {/* Footer */}
         <Box
           sx={{
             p: 4,
             borderTop: "1px solid #F8F9FA",
             display: "flex",
             justifyContent: "center",
+            gap: 2,
           }}
         >
+          <MDButton
+            variant="outlined"
+            startIcon={<ArrowBackIosNewIcon />}
+            onClick={handleBack}
+            sx={{
+              width: "140px",
+              py: 1.25,
+            }}
+          >
+            Back
+          </MDButton>
+
           <MDButton
             variant="contained"
             disabled={selectedIds.length === 0}
             onClick={handleNext}
+            sx={{
+              width: "140px",
+              py: 1.25,
+            }}
           >
             Next
           </MDButton>
