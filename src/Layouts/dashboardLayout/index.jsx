@@ -23,10 +23,10 @@ export default function DashboardLayout({ children }) {
         color: theme.palette.text.primary,
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        overflowX: "hidden",
+        overflow: "hidden",
       }}
     >
+      {/* Background Image */}
       <Box
         id="lifestyle-bg-element"
         sx={{
@@ -35,14 +35,15 @@ export default function DashboardLayout({ children }) {
           zIndex: 0,
           backgroundImage: `url(${backgroundImage})`,
           backgroundRepeat: "no-repeat",
-          backgroundPosition: { xs: "center top", md: "center" },
-          backgroundSize: { xs: "cover", md: "contain" },
-          opacity: 0.92,
-          userSelect: "none",
+          backgroundPosition: "center",
+          backgroundSize: "contain",
+          opacity: 0.15,
           pointerEvents: "none",
+          userSelect: "none",
         }}
       />
 
+      {/* Header */}
       <Box
         component="header"
         id="woliba-header"
@@ -50,39 +51,39 @@ export default function DashboardLayout({ children }) {
           position: "relative",
           zIndex: 10,
           width: "100%",
-          maxWidth: "1280px",
-          mx: "auto",
-          px: { xs: 3, md: 6 },
+          px: { xs: 3, sm: 4, md: 6 },
           py: 2.5,
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <Box id="logo-wrapper" sx={{ display: "flex", alignItems: "center" }}>
-          <Box
-            component="img"
-            src={wolibaLogo}
-            alt="Woliba Logo"
-            sx={{
-              height: { xs: 48, md: 58 },
-              width: "auto",
-              objectFit: "contain",
-              cursor: "pointer",
-              transition: "opacity 0.2s",
-              "&:hover": { opacity: 0.9 },
-            }}
-          />
-        </Box>
+        {/* Logo */}
+        <Box
+          component="img"
+          src={wolibaLogo}
+          alt="Woliba Logo"
+          sx={{
+            height: { xs: 42, md: 52 },
+            width: "auto",
+            objectFit: "contain",
+            cursor: "pointer",
+          }}
+        />
 
+        {/* Language */}
         <Box
           id="language-static-display"
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            gap: 0.5,
+          }}
         >
           <MDTypography
             sx={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "0.75rem",
+              fontSize: "0.8rem",
               color: theme.palette.text.primary,
               display: "flex",
               alignItems: "center",
@@ -91,32 +92,40 @@ export default function DashboardLayout({ children }) {
             }}
           >
             Language
-            <Box
-              component="img"
-              src="https://flagcdn.com/w40/us.png"
-              alt="United States Flag"
-              sx={{
-                width: 24,
-                height: 16,
-                borderRadius: "4px",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
-                objectFit: "cover",
-                mx: 0.5,
-              }}
-            />
-            <span style={{ fontWeight: 400 }}>En</span>
+          </MDTypography>
+
+          <Box
+            component="img"
+            src="https://flagcdn.com/w40/us.png"
+            alt="US Flag"
+            sx={{
+              width: 22,
+              height: 15,
+              borderRadius: "2px",
+              objectFit: "cover",
+            }}
+          />
+
+          <MDTypography
+            sx={{
+              fontSize: "0.8rem",
+              fontWeight: 500,
+              color: theme.palette.text.primary,
+            }}
+          >
+            En
           </MDTypography>
 
           <KeyboardArrowDownIcon
             sx={{
+              fontSize: "1rem",
               color: theme.palette.primary.main,
-              fontSize: "1.1rem",
-              ml: 0.5,
             }}
           />
         </Box>
       </Box>
 
+      {/* Main Content */}
       <Box
         component="main"
         id="main-content-row"
@@ -134,6 +143,7 @@ export default function DashboardLayout({ children }) {
         {children}
       </Box>
 
+      {/* Footer */}
       <Box
         component="footer"
         id="woliba-footer-bar"
@@ -141,9 +151,7 @@ export default function DashboardLayout({ children }) {
           position: "relative",
           zIndex: 10,
           width: "100%",
-          maxWidth: "1280px",
-          mx: "auto",
-          px: { xs: 3, md: 6 },
+          px: { xs: 3, sm: 4, md: 6 },
           py: 2.5,
           display: "flex",
           justifyContent: "center",
@@ -154,13 +162,12 @@ export default function DashboardLayout({ children }) {
         <MDButton
           component="a"
           href="#/terms"
-          onClick={(e) => e.preventDefault()}
           variant="text"
           sx={{
             color: theme.palette.primary.main,
-            opacity: 0.8,
+            opacity: 0.85,
             fontSize: "0.9rem",
-            px: 1,
+            textTransform: "none",
             "&:hover": {
               backgroundColor: "transparent",
               opacity: 1,
@@ -173,13 +180,12 @@ export default function DashboardLayout({ children }) {
         <MDButton
           component="a"
           href="#/contact"
-          onClick={(e) => e.preventDefault()}
           variant="text"
           sx={{
             color: theme.palette.primary.main,
-            opacity: 0.8,
+            opacity: 0.85,
             fontSize: "0.9rem",
-            px: 1,
+            textTransform: "none",
             "&:hover": {
               backgroundColor: "transparent",
               opacity: 1,

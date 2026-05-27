@@ -72,7 +72,7 @@ function UserDetailsVerification() {
           boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
         }}
       >
-        <MDTypography variant="h5" sx={{ textAlign: "center", mb: 4 }}>
+        <MDTypography variant="h5" sx={{ textAlign: "center", mb: 4, fontWeight: 700 }}>
           Registration
         </MDTypography>
 

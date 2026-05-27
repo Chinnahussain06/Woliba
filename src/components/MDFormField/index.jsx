@@ -34,7 +34,7 @@ export default function MDFormField({
               : null;
 
         return (
-          <Box sx={{ mb: 2, textAlign: "left" }}>
+          <Box sx={{ textAlign: "left" }}>
             {label && (
               <MDTypography
                 component="label"
@@ -43,8 +43,8 @@ export default function MDFormField({
                   display: "block",
                   fontSize: "1rem",
                   fontWeight: 400,
-                  color: palette.text.primary,
-                  mb: 0.75,
+                  color: palette.secondary.main,
+                  mb: 0.5,
                 }}
               >
                 {label}
@@ -75,7 +75,7 @@ export default function MDFormField({
                 formHelperText: {
                   sx: {
                     minHeight: "1.25rem",
-                    m: "3px 0 0",
+                    m: "2px 0 0",
                     fontSize: "0.75rem",
                     color: palette.text.secondary,
                   },
