@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 
-const videoSrc = require("../../assets/loader_screen.mp4");
+import videoSrc from "@/src/assets/images/Loader.mp4";
 
 const MDLoader = ({ size = 80, text = "Loading ..." }) => {
   return (

@@ -66,7 +66,7 @@ function LoginCredentials() {
       .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Confirm password is required"),
 
-    birthday: Yup.number().required("Birthday is required"),
+    birthday: Yup.string().required("Birthday is required"),
 
     contactNumber: Yup.string()
       .matches(/^[0-9]{10}$/, "Enter valid 10 digit mobile number")
@@ -336,7 +336,7 @@ function LoginCredentials() {
                     variant="outlined"
                     onClick={() => navigate("/register/otp-verification")}
                     startIcon={<ArrowBackIosNew sx={{ fontSize: "0.75rem" }} />}
-                    sx={{
+                      sx={{
                       width: "140px",
                       py: 1.25,
                     }}

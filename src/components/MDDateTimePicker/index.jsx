@@ -26,11 +26,11 @@ const MDDatePicker = ({
   placeholder,
   ...props
 }) => {
-  const dateValue = seconds ? dayjs.unix(seconds) : null;
+  const dateValue = seconds ? dayjs(seconds, "YYYY-MM-DD") : null;
 
   const handleChange = (newValue) => {
     if (onChange) {
-      onChange(newValue ? newValue.unix() : null);
+      onChange(newValue ? newValue.format("YYYY-MM-DD") : null);
     }
   };
 
@@ -54,7 +54,7 @@ const MDDatePicker = ({
         <DatePicker
           value={dateValue}
           onChange={handleChange}
-          format="MM/DD/YYYY"
+          format="YYYY-MM-DD"
           slots={{
             toolbar: () => null,
           }}
