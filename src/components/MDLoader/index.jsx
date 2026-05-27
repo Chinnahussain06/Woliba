@@ -1,16 +1,17 @@
 import React from "react";
-import { Grid, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import videoSrc from "@/src/assets/images/Loader.mp4";
 
 const MDLoader = ({ size = 80, text = "Loading ..." }) => {
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      sx={{ height: "100vh" }}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
     >
       <video
         autoPlay
@@ -20,16 +21,24 @@ const MDLoader = ({ size = 80, text = "Loading ..." }) => {
         style={{
           width: size,
           height: size,
-          objectFit: "contain",
+          objectFit: "cover",
+          borderRadius: "50%",
         }}
       >
         <source src={videoSrc} type="video/mp4" />
       </video>
-
       {text && (
-        <Typography sx={{ color: "warning.main", mt: 1 }}>{text}</Typography>
+        <Typography
+          sx={{
+            color: "warning.main",
+            mt: 1,
+            textAlign: "center",
+          }}
+        >
+          {text}
+        </Typography>
       )}
-    </Grid>
+    </Box>
   );
 };
 

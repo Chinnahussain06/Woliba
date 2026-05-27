@@ -32,6 +32,7 @@ import {
   selectPillarsLoading,
   selectSelectedPillars,
   selectRegistrationPayload,
+  selectError,
 } from "@/src/redux/selectors/registrationSelectors";
 
 const WellbeingPillars = () => {
@@ -43,6 +44,7 @@ const WellbeingPillars = () => {
 
   const pillars = useAppSelector(selectPillars) || [];
   const pillarsLoading = useAppSelector(selectPillarsLoading);
+  const apiError = useAppSelector(selectError);
 
   const selectedIds = useAppSelector(selectSelectedPillars);
 
@@ -72,25 +74,27 @@ const WellbeingPillars = () => {
 
   if (isSubmitting) {
     return (
-     
+      <DashboardLayout>
         <Box
           sx={{
+            position: "fixed",
+            inset: 0,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            minHeight: "70vh",
+            bgcolor: theme.palette.background.default,
+            zIndex: 9999,
           }}
         >
-          <MDLoader text="Getting your wellness journey ready..." size="25em" />
+          <MDLoader text="Getting your wellness journey ready..." size="20em" />
         </Box>
-      
+      </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-
       <Box
         component="main"
         sx={{
@@ -104,8 +108,11 @@ const WellbeingPillars = () => {
           py: 4,
         }}
       >
-        <MDFormCard title="Select any 3 well-being pillars goal you want to achieve — at least one is required." maxWidth="70%">
-          <MDAlert />
+        <MDFormCard
+          title="Select any 3 well-being pillars goal you want to achieve — at least one is required."
+          maxWidth="70%"
+        >
+          <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
           {pillarsLoading ? (
             <Box
