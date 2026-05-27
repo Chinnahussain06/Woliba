@@ -140,7 +140,7 @@ function OtpVerification() {
           color="text.secondary"
           sx={{ lineHeight: 1.6, mb: 4, mt: 1 }}
         >
-          We&apos;ve sent a 6-digit OTP to <strong>{email}</strong>
+          We&apos;ve sent a 6-digit OTP to your email
         </MDTypography>
 
         {apiError && (

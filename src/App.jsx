@@ -12,6 +12,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 import { store } from "./redux/store";
 import wolibaTheme from "./assets/theme";
+import { CircularProgress } from "@mui/material";
 
 // Lazy loaded pages
 const CompanyVerificationPage = lazy(
@@ -24,6 +25,7 @@ const OtpVerificationPage = lazy(() => import("./pages/OtpVerification"));
 const LoginCredentialsPage = lazy(() => import("./pages/LoginCredentials"));
 const WellnessSelector = lazy(() => import("./pages/WellnessSelector"));
 const WellbeingPillars = lazy(() => import("./pages/WellBeingPillars"));
+const WelcomePage = lazy(() => import("./pages/welcome"));
 
 const PageLoader = () => (
   <div
@@ -34,7 +36,7 @@ const PageLoader = () => (
       alignItems: "center",
     }}
   >
-   <CircularProgress sx={{ color: wolibaTheme.palette.primary.main }} />
+    <CircularProgress sx={{ color: wolibaTheme.palette.primary.main }} />
   </div>
 );
 
@@ -75,6 +77,8 @@ export default function App() {
                 path="/register/wellbeing-pillars"
                 element={<WellbeingPillars />}
               />
+
+              <Route path="/welcome" element={<WelcomePage />} />
 
               <Route
                 path="*"

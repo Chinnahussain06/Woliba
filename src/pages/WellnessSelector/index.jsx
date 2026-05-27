@@ -9,13 +9,14 @@ import {
   AccordionDetails,
   CircularProgress,
   Chip,
+  useTheme,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
-
 import { fetchInterests } from "@/src/redux/thunks/registrationThunks";
 import { toggleInterest } from "@/src/redux/slices/registrationSlice";
 import {
@@ -29,12 +30,10 @@ import DashboardLayout from "@/src/Layouts/dashboardLayout";
 import MDButton from "@/src/components/MDButton";
 import MDTypography from "@/src/components/MDTypography";
 
-const ASSET_BASE_URL = "https://api.woliba.io/storage/";
-const FALLBACK_ICON = "https://cdn-icons-png.flaticon.com/512/3048/3048398.png";
-
 const WellnessSelector = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const theme = useTheme();
 
   const interests = useAppSelector(selectInterests);
   const status = useAppSelector(selectInterestsStatus);
@@ -49,37 +48,32 @@ const WellnessSelector = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (interests.length > 0 && !expanded) {
+    if (interests.length > 0 && expanded === null) {
       const firstCategory =
         interests[0]?.interest_type === "Other"
           ? "Other Sports"
           : interests[0]?.interest_type;
-
       setExpanded(firstCategory);
     }
   }, [interests, expanded]);
 
   const groupedInterests = useMemo(() => {
     const map = {};
-
     interests.forEach((item) => {
       const type =
         item.interest_type === "Other" ? "Other Sports" : item.interest_type;
-
       if (!map[type]) map[type] = [];
       map[type].push(item);
     });
-
     return map;
   }, [interests]);
 
-  const handleBack = () => {
-    navigate(-1);
+  const handleAccordionChange = (category) => (e, isExpanded) => {
+    setExpanded(isExpanded ? category : false);
   };
 
-  const handleNext = () => {
-    navigate("/register/wellbeing-pillars");
-  };
+  const handleBack = () => navigate(-1);
+  const handleNext = () => navigate("/register/wellbeing-pillars");
 
   return (
     <DashboardLayout>
@@ -87,17 +81,21 @@ const WellnessSelector = () => {
         sx={{
           width: "100%",
           maxWidth: "1000px",
-          bgcolor: "white",
+          bgcolor: theme.palette.background.paper,
           borderRadius: "20px",
           boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.04)",
           overflow: "hidden",
           minHeight: "500px",
           display: "flex",
           flexDirection: "column",
+          mx: "auto",
         }}
       >
         <Box sx={{ p: 4, textAlign: "center" }}>
-          <MDTypography variant="h6" sx={{ color: "#1E3A5F", fontWeight: 700 }}>
+          <MDTypography
+            variant="h6"
+            sx={{ color: theme.palette.secondary.main, fontWeight: 700 }}
+          >
             Select all wellness interests that apply — at least one is required.
           </MDTypography>
         </Box>
@@ -111,102 +109,109 @@ const WellnessSelector = () => {
           }}
         >
           {isLoading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                py: 10,
-              }}
-            >
-              <CircularProgress sx={{ color: "#D2686E" }} />
+            <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
+              <CircularProgress sx={{ color: theme.palette.primary.main }} />
             </Box>
           ) : (
-            Object.entries(groupedInterests).map(([category, items]) => (
-              <Accordion
-                key={category}
-                expanded={expanded === category}
-                onChange={(e, isExpanded) =>
-                  setExpanded(isExpanded ? category : false)
-                }
-                disableGutters
-                elevation={0}
-                sx={{ "&:before": { display: "none" } }}
-              >
-                <AccordionSummary
-                  expandIcon={<ArrowDropDownIcon sx={{ color: "#D2686E" }} />}
-                >
-                  <MDTypography
+            Object.entries(groupedInterests).map(
+              ([category, items], index, arr) => {
+                const isExpanded = expanded === category;
+
+                return (
+                  <Accordion
+                    key={category}
+                    expanded={isExpanded}
+                    onChange={handleAccordionChange(category)}
+                    disableGutters
+                    elevation={0}
                     sx={{
-                      fontSize: "0.9rem",
-                      color: "#8292A2",
-                      fontWeight: 500,
+                      "&:before": { display: "none" },
                     }}
                   >
-                    {category}
-                  </MDTypography>
-                </AccordionSummary>
+                    <AccordionSummary
+                      expandIcon={
+                        isExpanded ? (
+                          <ArrowDropUpIcon
+                            fontSize="medium"
+                            sx={{
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        ) : (
+                          <ArrowDropDownIcon
+                            fontSize="medium"
+                            sx={{
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )
+                      }
+                      sx={{ px: 0, minHeight: "48px" }}
+                    >
+                      <MDTypography
+                        variant="subtitle1"
+                        sx={{
+                          color: theme.palette.text.secondary,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {category}
+                      </MDTypography>
+                    </AccordionSummary>
 
-                <AccordionDetails>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 1.5,
-                      overflowX: "auto",
-                      pb: 1,
-                    }}
-                  >
-                    {items.map((item) => {
-                      const isSelected = selectedIds.includes(item.id);
+                    <AccordionDetails sx={{ px: 0, pt: 0, pb: 2 }}>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                        {items.map((item) => {
+                          const isSelected = selectedIds.includes(item.id);
 
-                      return (
-                        <Chip
-                          key={item.id}
-                          label={item.name}
-                          onClick={() => dispatch(toggleInterest(item.id))}
-                          avatar={
-                            <Box
-                              component="img"
-                              src={`${ASSET_BASE_URL}${
-                                isSelected
-                                  ? item.interest_white_icon
-                                  : item.interest_color_icon
-                              }`}
+                          return (
+                            <Chip
+                              key={item.id}
+                              label={item.name}
+                              onClick={() => dispatch(toggleInterest(item.id))}
                               sx={{
-                                width: "16px !important",
-                                height: "16px !important",
-                              }}
-                              onError={(e) => {
-                                e.target.src = FALLBACK_ICON;
+                                height: "34px",
+                                borderRadius: "100px",
+                                border: "1px solid",
+                                borderColor: isSelected
+                                  ? theme.palette.primary.main
+                                  : theme.palette.divider,
+                                bgcolor: isSelected
+                                  ? `${theme.palette.primary.main} !important`
+                                  : "transparent",
+                                color: isSelected
+                                  ? `${theme.palette.primary.contrastText} !important`
+                                  : theme.palette.text.primary,
+                                cursor: "pointer",
+                                fontSize: "0.8rem",
+                                fontWeight: 500,
+                                transition: "all 0.15s ease",
+                                "&:hover": {
+                                  borderColor: theme.palette.primary.main,
+                                  bgcolor: isSelected
+                                    ? `${theme.palette.primary.dark} !important`
+                                    : `${theme.palette.primary.main}12 !important`,
+                                },
+                                "& .MuiChip-label": {
+                                  px: 1.5,
+                                },
                               }}
                             />
-                          }
-                          sx={{
-                            height: "32px",
-                            borderRadius: "100px",
-                            flexShrink: 0,
-                            bgcolor: isSelected
-                              ? "#D2686E !important"
-                              : "transparent",
-                            border: `1px solid ${
-                              isSelected ? "#D2686E" : "#EEF1F4"
-                            }`,
-                            color: isSelected ? "white !important" : "#1E3A5F",
-                            cursor: "pointer",
-                          }}
-                        />
-                      );
-                    })}
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-            ))
+                          );
+                        })}
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                );
+              },
+            )
           )}
         </Box>
 
         <Box
           sx={{
             p: 4,
-            borderTop: "1px solid #F8F9FA",
+            borderTop: `1px solid ${theme.palette.divider}`,
             display: "flex",
             justifyContent: "center",
             gap: 2,
@@ -214,7 +219,7 @@ const WellnessSelector = () => {
         >
           <MDButton
             variant="outlined"
-            startIcon={<ArrowBackIosNewIcon />}
+            startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.8rem" }} />}
             onClick={handleBack}
             sx={{ width: "140px", py: 1.25 }}
           >

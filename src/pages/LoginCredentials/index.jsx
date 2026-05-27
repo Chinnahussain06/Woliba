@@ -175,6 +175,7 @@ function LoginCredentials() {
                   name={birthday.name}
                   seconds={values[birthday.name]}
                   onChange={(value) => setFieldValue(birthday.name, value)}
+                  required={true}
                 />
 
                 <MDFormField

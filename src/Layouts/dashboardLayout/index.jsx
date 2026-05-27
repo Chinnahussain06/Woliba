@@ -1,5 +1,8 @@
 import React from "react";
 import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
+
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import MDButton from "@/src/components/MDButton";
 import MDTypography from "@/src/components/MDTypography";
@@ -8,14 +11,16 @@ import wolibaLogo from "@/src/assets/images/wolibaLogo.png";
 import backgroundImage from "@/src/assets/images/Background.png";
 
 export default function DashboardLayout({ children }) {
+  const theme = useTheme();
+
   return (
     <Box
       id="dashboard-layout"
       sx={{
         position: "relative",
         minHeight: "100vh",
-        bgcolor: "#FCFBFA",
-        color: "#1E3A5F",
+        bgcolor: theme.palette.background.default,
+        color: theme.palette.text.primary,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -60,7 +65,7 @@ export default function DashboardLayout({ children }) {
             src={wolibaLogo}
             alt="Woliba Logo"
             sx={{
-              height: { xs: 36, md: 44 },
+              height: { xs: 48, md: 58 },
               width: "auto",
               objectFit: "contain",
               cursor: "pointer",
@@ -78,7 +83,7 @@ export default function DashboardLayout({ children }) {
             sx={{
               fontFamily: "Inter, sans-serif",
               fontSize: "1.1rem",
-              color: "#1E3A5F",
+              color: theme.palette.text.primary,
               display: "flex",
               alignItems: "center",
               gap: 1,
@@ -102,17 +107,13 @@ export default function DashboardLayout({ children }) {
             <span style={{ fontWeight: 600 }}>En</span>
           </MDTypography>
 
-          <Box
-            component="span"
+          <KeyboardArrowDownIcon
             sx={{
-              color: "#D2686E",
-              fontSize: "0.7rem",
-              ml: 1,
-              transform: "scaleY(0.85)",
+              color: theme.palette.primary.main,
+              fontSize: "1.1rem",
+              ml: 0.5,
             }}
-          >
-            ▼
-          </Box>
+          />
         </Box>
       </Box>
 
@@ -156,9 +157,14 @@ export default function DashboardLayout({ children }) {
           onClick={(e) => e.preventDefault()}
           variant="text"
           sx={{
-            color: "rgba(210, 104, 110, 0.8)",
-            fontSize: "0.75rem",
+            color: theme.palette.primary.main,
+            opacity: 0.8,
+            fontSize: "0.9rem",
             px: 1,
+            "&:hover": {
+              backgroundColor: "transparent",
+              opacity: 1,
+            },
           }}
         >
           Terms of Use
@@ -170,9 +176,14 @@ export default function DashboardLayout({ children }) {
           onClick={(e) => e.preventDefault()}
           variant="text"
           sx={{
-            color: "rgba(210, 104, 110, 0.8)",
-            fontSize: "0.75rem",
+            color: theme.palette.primary.main,
+            opacity: 0.8,
+            fontSize: "0.9rem",
             px: 1,
+            "&:hover": {
+              backgroundColor: "transparent",
+              opacity: 1,
+            },
           }}
         >
           Contact Us
