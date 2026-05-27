@@ -28,7 +28,7 @@ export const form = {
     birthday: {
       name: "birthday",
       label: "Date of Birth",
-      placeholder: "Enter date of birth",
+      placeholder: "Select date of birth(YYYY-MM-DD)",
       type: "date",
       required: true,
       errorMsg: "Birthday is required.",
@@ -46,7 +46,7 @@ export const form = {
     workAnniversary: {
       name: "workAnniversary",
       label: "Work Anniversary",
-      placeholder: "Enter work anniversary",
+      placeholder: "Select work anniversary(YYYY-MM-DD)",
       type: "date",
       required: false,
       errorMsg: "Work anniversary is required.",

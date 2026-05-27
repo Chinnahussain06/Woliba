@@ -3,19 +3,21 @@ import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import { Box, Paper, Divider, Alert } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 
 // Components
-import MDTypography from "@/src/components/MDTypography";
 import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDFormField from "@/src/components/MDFormField";
-import DashboardLayout from "@/src/Layouts/dashboardLayout";
+import MDFormCard from "@/src/components/MDFormCard";
+import MDAlert from "@/src/components/MDAlert";
+import DashboardLayout from "@/src/Layouts/DashboardLayout";
+import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
+import Footer from "@/src/Layouts/Footer";
 
 // Redux
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { saveUserDetails } from "../../redux/thunks/registrationThunks";
-import { clearError } from "../../redux/slices/registrationSlice";
-
+import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
+import { saveUserDetails } from "@/src/redux/thunks/registrationThunks";
+import { clearError } from "@/src/redux/slices/registrationSlice";
 import {
   selectIsLoading,
   selectError,
@@ -24,7 +26,7 @@ import {
   selectEmail,
   selectFirstName,
   selectLastName,
-} from "../../redux/selectors/registrationSelectors";
+} from "@/src/redux/selectors/registrationSelectors";
 
 // Schema
 import { form, initialValues, userDetailsValidationSchema } from "./schema";
@@ -37,7 +39,6 @@ function UserDetailsVerification() {
   const apiError = useAppSelector(selectError);
   const companyName = useAppSelector(selectCompanyName);
   const companyId = useAppSelector(selectCompanyId);
-
   const email = useAppSelector(selectEmail);
   const firstName = useAppSelector(selectFirstName);
   const lastName = useAppSelector(selectLastName);
@@ -60,101 +61,94 @@ function UserDetailsVerification() {
 
   return (
     <DashboardLayout>
-      <Paper
-        elevation={0}
+      <DashboardNavbar />
+
+      <Box
+        component="main"
         sx={{
-          width: "100%",
-          maxWidth: 480,
-          p: { xs: 4, sm: 5 },
-          borderRadius: 4,
-          border: "1px solid #E6EAF0",
-          backgroundColor: "#fff",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: 2,
+          py: 4,
         }}
       >
-        <MDTypography variant="h5" sx={{ textAlign: "center", mb: 4, fontWeight: 700 }}>
-          Registration
-        </MDTypography>
+        <MDFormCard title="Registration">
+          <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
-        {apiError && (
-          <Alert
-            severity="error"
-            onClose={() => dispatch(clearError())}
-            sx={{ mb: 3 }}
+          <Formik
+            initialValues={{
+              ...initialValues,
+              emailId: email || "",
+              firstName: firstName || "",
+              lastName: lastName || "",
+              companyName: companyName || "",
+            }}
+            validationSchema={userDetailsValidationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
           >
-            {apiError}
-          </Alert>
-        )}
+            {({ dirty }) => (
+              <Form>
+                <MDFormField
+                  label={emailId.label}
+                  name={emailId.name}
+                  placeholder={emailId.placeholder}
+                  required
+                />
 
-        <Formik
-          initialValues={{
-            ...initialValues,
-            emailId: email || "",
-            firstName: firstName || "",
-            lastName: lastName || "",
-            companyName: companyName || "",
-          }}
-          validationSchema={userDetailsValidationSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-        >
-          {({ dirty }) => (
-            <Form>
-              <MDFormField
-                label={emailId.label}
-                name={emailId.name}
-                placeholder={emailId.placeholder}
-                required
-              />
+                <MDFormField
+                  label={fn.label}
+                  name={fn.name}
+                  placeholder={fn.placeholder}
+                  required
+                />
 
-              <MDFormField
-                label={fn.label}
-                name={fn.name}
-                placeholder={fn.placeholder}
-                required
-              />
+                <MDFormField
+                  label={ln.label}
+                  name={ln.name}
+                  placeholder={ln.placeholder}
+                  required
+                />
 
-              <MDFormField
-                label={ln.label}
-                name={ln.name}
-                placeholder={ln.placeholder}
-                required
-              />
+                <MDFormField
+                  label={cn.label}
+                  name={cn.name}
+                  disabled
+                  value={companyName}
+                  required
+                />
 
-              <MDFormField
-                label={cn.label}
-                name={cn.name}
-                disabled
-                value={companyName}
-                required
-              />
+                <Divider sx={{ my: 4 }} />
 
-              <Divider sx={{ my: 4 }} />
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDLoadingButton
+                    type="submit"
+                    loading={isLoading}
+                    disabled={!dirty}
+                    sx={{
+                      width: "100%",
+                      maxWidth: 220,
+                      py: 1.5,
+                      fontSize: "1rem",
+                      fontWeight: 600,
+                      backgroundColor: "#D2686E",
+                      "&:hover": { backgroundColor: "#C2555B" },
+                    }}
+                  >
+                    Verify email
+                  </MDLoadingButton>
+                </Box>
+              </Form>
+            )}
+          </Formik>
+        </MDFormCard>
+      </Box>
 
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <MDLoadingButton
-                  type="submit"
-                  loading={isLoading}
-                  disabled={!dirty}
-                  sx={{
-                    width: "100%",
-                    maxWidth: 220,
-                    py: 1.5,
-                    fontSize: "1rem",
-                    fontWeight: 600,
-                    backgroundColor: "#D2686E",
-                    "&:hover": {
-                      backgroundColor: "#C2555B",
-                    },
-                  }}
-                >
-                  Verify email
-                </MDLoadingButton>
-              </Box>
-            </Form>
-          )}
-        </Formik>
-      </Paper>
+      <Footer />
     </DashboardLayout>
   );
 }

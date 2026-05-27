@@ -6,7 +6,7 @@ import "dayjs/locale/en-gb";
 
 import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import { useTheme } from "@mui/material/styles";
 import MDTypography from "../MDTypography";
 import { ErrorMessage } from "formik";
@@ -32,7 +32,6 @@ const MDDatePicker = ({
   };
 
   return (
-    // ✅ mb:2 matches MDFormField (was mb:4)
     <Box sx={{ mb: 2, textAlign: "left" }}>
       {label && (
         <MDTypography
@@ -43,7 +42,7 @@ const MDDatePicker = ({
             fontSize: "1rem",
             fontWeight: 400,
             color: palette.text.primary,
-            mb: 0.75, // ✅ matches MDFormField label margin
+            mb: 0.75,
           }}
         >
           {label}
@@ -60,31 +59,42 @@ const MDDatePicker = ({
           value={dateValue}
           onChange={handleChange}
           format="YYYY-MM-DD"
+          placeholder={placeholder || "Select date..."}
           slots={{ toolbar: () => null }}
           slotProps={{
             textField: {
               fullWidth: true,
-              placeholder: placeholder || "Select date...",
               sx: {
-                // ✅ No extra mb here — Box handles spacing
                 "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px", // ✅ matches MDFormField (was 20-25px)
+                  borderRadius: "8px",
                   backgroundColor: palette.background.paper,
                   fontSize: "0.875rem",
                   color: palette.text.primary,
 
                   "& fieldset": {
-                    borderColor: palette.divider, // ✅ matches
+                    borderColor: palette.divider,
                   },
                   "&:hover fieldset": {
-                    borderColor: palette.text.secondary, // ✅ matches
+                    borderColor: palette.text.secondary,
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: palette.primary.dark, // ✅ matches
+                    borderColor: palette.primary.dark,
                   },
                   "&.Mui-disabled": {
                     backgroundColor: palette.background.default,
                     color: palette.text.secondary,
+                  },
+                  "& .MuiSvgIcon-root": {
+                    color: `${palette.primary.main} !important`,
+                  },
+
+                  "& .MuiIconButton-root": {
+                    color: `${palette.primary.main} !important`,
+                  },
+
+                  "& input::placeholder": {
+                    color: palette.text.secondary,
+                    opacity: 0.8,
                   },
                 },
                 "& input::placeholder": {
@@ -95,15 +105,15 @@ const MDDatePicker = ({
               InputProps: {
                 endAdornment: (
                   <InputAdornment position="end">
-                    <CalendarTodayIcon
-                      sx={{ color: palette.primary.main, fontSize: "20px" }}
+                    <CalendarMonthOutlinedIcon
+                      fontSize="small"
+                      sx={{ color: "#fff !important", mr: 1 }}
                     />
                   </InputAdornment>
                 ),
               },
             },
 
-            // ✅ Popup paper radius kept rounded (calendar popup, not the input)
             layout: {
               sx: {
                 "& .MuiPaper-root": { borderRadius: "20px" },
@@ -163,7 +173,6 @@ const MDDatePicker = ({
         />
       </LocalizationProvider>
 
-      {/* ✅ Matches MDFormField helper text gap exactly */}
       <ErrorMessage name={name}>
         {(msg) => (
           <Box

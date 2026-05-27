@@ -5,30 +5,33 @@ import { useNavigate } from "react-router-dom";
 // MUI
 import {
   Box,
-  Paper,
   Divider,
-  Alert,
   IconButton,
   InputAdornment,
   Checkbox,
   FormControlLabel,
+  useTheme,
 } from "@mui/material";
 
 // Icons
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 
 // Components
-import MDFormField from "../../components/MDFormField";
-import MDLoadingButton from "../../components/MDLoadingButton";
+import MDFormField from "@/src/components/MDFormField";
+import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDTypography from "@/src/components/MDTypography";
-import DashboardLayout from "../../Layouts/dashboardLayout";
 import MDDateTimePicker from "@/src/components/MDDateTimePicker";
 import MDButton from "@/src/components/MDButton";
+import MDFormCard from "@/src/components/MDFormCard";
+import MDAlert from "@/src/components/MDAlert";
+import DashboardLayout from "@/src/Layouts/DashboardLayout";
+import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
+import Footer from "@/src/Layouts/Footer";
 
 // Redux
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
 import {
   clearError,
   setPassword,
@@ -36,9 +39,8 @@ import {
   setPhone,
   setWorkAnniversary,
   setAcceptedPolicy,
-} from "../../redux/slices/registrationSlice";
-
-import { selectError } from "../../redux/selectors/registrationSelectors";
+} from "@/src/redux/slices/registrationSlice";
+import { selectError } from "@/src/redux/selectors/registrationSelectors";
 
 // Schema
 import {
@@ -48,6 +50,7 @@ import {
 } from "./schema";
 
 function LoginCredentials() {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -79,51 +82,30 @@ function LoginCredentials() {
 
   return (
     <DashboardLayout>
-      <Paper
-        elevation={0}
+      <DashboardNavbar />
+
+      <Box
+        component="main"
         sx={{
-          width: "100%",
-          maxWidth: "480px",
-          p: { xs: 4, md: 5 },
-          borderRadius: "24px",
-          border: "1px solid rgba(226, 232, 240, 0.8)",
-          backgroundColor: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(12px)",
-          boxShadow: "0px 20px 50px rgba(26,58,95,0.05)",
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
           display: "flex",
-          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          px: 2,
+          py: 4,
         }}
       >
-        <MDTypography
-          variant="h5"
-          sx={{
-            color: "#1E3A5F",
-            fontWeight: 700,
-            textAlign: "center",
-            mb: 4,
-          }}
-        >
-          Login Credentials
-        </MDTypography>
+        <MDFormCard title="Login Credentials">
+          <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
-        {/* Error */}
-        {apiError && (
-          <Alert
-            severity="error"
-            onClose={() => dispatch(clearError())}
-            sx={{ mb: 3, borderRadius: "12px" }}
+          <Formik
+            initialValues={InitialValues}
+            validationSchema={loginCredentialsValidationSchema}
+            onSubmit={handleLoginCredentialsSubmit}
           >
-            {apiError}
-          </Alert>
-        )}
-
-        <Formik
-          initialValues={InitialValues}
-          validationSchema={loginCredentialsValidationSchema}
-          onSubmit={handleLoginCredentialsSubmit}
-        >
-          {({ values, setFieldValue, isValid, isSubmitting }) => {
-            return (
+            {({ values, setFieldValue, isValid, isSubmitting }) => (
               <Form>
                 <MDFormField
                   label={password.label}
@@ -136,8 +118,13 @@ function LoginCredentials() {
                       <InputAdornment position="end">
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
+                          sx={{ color: theme.palette.primary.main }}
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showPassword ? (
+                            <VisibilityOffOutlined />
+                          ) : (
+                            <VisibilityOutlined />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -157,11 +144,12 @@ function LoginCredentials() {
                           onClick={() =>
                             setShowConfirmPassword(!showConfirmPassword)
                           }
+                          sx={{ color: theme.palette.primary.main }}
                         >
                           {showConfirmPassword ? (
-                            <VisibilityOff />
+                            <VisibilityOffOutlined />
                           ) : (
-                            <Visibility />
+                            <VisibilityOutlined />
                           )}
                         </IconButton>
                       </InputAdornment>
@@ -175,7 +163,7 @@ function LoginCredentials() {
                   name={birthday.name}
                   seconds={values[birthday.name]}
                   onChange={(value) => setFieldValue(birthday.name, value)}
-                  required={true}
+                  required
                 />
 
                 <MDFormField
@@ -262,10 +250,12 @@ function LoginCredentials() {
                   </MDLoadingButton>
                 </Box>
               </Form>
-            );
-          }}
-        </Formik>
-      </Paper>
+            )}
+          </Formik>
+        </MDFormCard>
+      </Box>
+
+      <Footer />
     </DashboardLayout>
   );
 }

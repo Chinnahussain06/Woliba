@@ -2,14 +2,18 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import { Box, Paper, Divider, Alert } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 
 // Components
 import MDTypography from "@/src/components/MDTypography";
 import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDButton from "@/src/components/MDButton";
-import DashboardLayout from "@/src/Layouts/dashboardLayout";
+import MDFormCard from "@/src/components/MDFormCard";
+import MDAlert from "@/src/components/MDAlert";
+import DashboardLayout from "@/src/Layouts/DashboardLayout";
+import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
+import Footer from "@/src/Layouts/Footer";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
@@ -55,13 +59,11 @@ function OtpVerification() {
 
   const updateOtp = (value, index) => {
     if (!/^\d?$/.test(value)) return;
-
     setOtp((prev) => {
       const next = [...prev];
       next[index] = value;
       return next;
     });
-
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -69,7 +71,6 @@ function OtpVerification() {
 
   const handleKeyDown = (e, index) => {
     if (e.key !== "Backspace") return;
-
     setOtp((prev) => {
       const next = [...prev];
       if (next[index]) {
@@ -92,7 +93,6 @@ function OtpVerification() {
 
   const handleResend = async () => {
     if (timeLeft > 0 || isResending || !email) return;
-
     const result = await dispatch(resendOtp({ email }));
     if (resendOtp.fulfilled.match(result)) {
       setOtp(Array(6).fill(""));
@@ -102,11 +102,9 @@ function OtpVerification() {
 
   const handleSubmit = async () => {
     if (!isOtpComplete || isLoading || !otpToken) return;
-
     const result = await dispatch(
       verifyOtp({ otp: otp.join(""), token: otpToken }),
     );
-
     if (verifyOtp.fulfilled.match(result)) {
       navigate("/register/login-credentials");
     }
@@ -114,120 +112,110 @@ function OtpVerification() {
 
   return (
     <DashboardLayout>
-      <Paper
-        elevation={0}
+      <DashboardNavbar />
+
+      <Box
+        component="main"
         sx={{
-          width: "100%",
-          maxWidth: "560px",
-          p: { xs: 4, md: 7 },
-          borderRadius: "24px",
-          border: "1px solid rgba(226, 232, 240, 0.8)",
-          backgroundColor: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(12px)",
-          boxShadow: "0px 20px 50px rgba(26,58,95,0.05)",
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
+          justifyContent: "center",
+          px: 2,
+          py: 4,
         }}
       >
-        <MDTypography variant="h5" fontWeight={700} mb={2} textAlign="center">
-          Input verification code
-        </MDTypography>
-
-        <MDTypography
-          variant="subtitle2"
-          textAlign="center"
-          color="text.secondary"
-          sx={{ lineHeight: 1.6, mb: 4, mt: 1 }}
+        <MDFormCard
+          title="Input verification code"
+          subtitle="We've sent a 6-digit OTP to your email. please enter it below"
+          maxWidth="560px"
         >
-          We&apos;ve sent a 6-digit OTP to your email
-        </MDTypography>
+          <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
-        {apiError && (
-          <Alert
-            severity="error"
-            onClose={() => dispatch(clearError())}
-            sx={{ width: "100%", mb: 3 }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "12px",
+              mb: 4,
+            }}
           >
-            {apiError}
-          </Alert>
-        )}
+            {otp.map((val, i) => (
+              <input
+                key={i}
+                value={val}
+                ref={(el) => (inputRefs.current[i] = el)}
+                onChange={(e) => updateOtp(e.target.value, i)}
+                onKeyDown={(e) => handleKeyDown(e, i)}
+                onPaste={i === 0 ? handlePaste : undefined}
+                inputMode="numeric"
+                maxLength={1}
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  textAlign: "center",
+                  fontSize: "20px",
+                  fontWeight: 600,
+                  borderRadius: "10px",
+                  border: "1.5px solid #D9DEE7",
+                  outline: "none",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#D2686E")}
+                onBlur={(e) => (e.target.style.borderColor = "#D9DEE7")}
+              />
+            ))}
+          </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "12px",
-            mb: 4,
-          }}
-        >
-          {otp.map((val, i) => (
-            <input
-              key={i}
-              value={val}
-              ref={(el) => (inputRefs.current[i] = el)}
-              onChange={(e) => updateOtp(e.target.value, i)}
-              onKeyDown={(e) => handleKeyDown(e, i)}
-              onPaste={i === 0 ? handlePaste : undefined}
-              inputMode="numeric"
-              maxLength={1}
-              style={{
-                width: "52px",
-                height: "52px",
-                textAlign: "center",
-                fontSize: "20px",
-                fontWeight: 600,
-                borderRadius: "10px",
-                border: "1.5px solid #D9DEE7",
-                outline: "none",
-              }}
-              onFocus={(e) => (e.target.style.borderColor = "#D2686E")}
-              onBlur={(e) => (e.target.style.borderColor = "#D9DEE7")}
-            />
-          ))}
-        </Box>
-
-        <MDTypography
-          variant="body2"
-          textAlign="center"
-          onClick={handleResend}
-          sx={{
-            mb: 3,
-            fontWeight: 500,
-            color: timeLeft > 0 ? "text.secondary" : "#D2686E",
-            cursor: timeLeft === 0 && !isResending ? "pointer" : "default",
-            userSelect: "none",
-          }}
-        >
-          {timeLeft > 0
-            ? `Resend OTP in ${formatTime(timeLeft)}`
-            : isResending
-              ? "Sending..."
-              : "Resend OTP"}
-        </MDTypography>
-
-        <Divider sx={{ width: "100%", mb: 3 }} />
-
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <MDButton
-            variant="outlined"
-            onClick={() => navigate("/register/user-details-verification")}
-            startIcon={<ArrowBackIosNew sx={{ fontSize: 14 }} />}
-            sx={{ width: "140px", py: 1.25 }}
+          <MDTypography
+            variant="body2"
+            textAlign="center"
+            onClick={handleResend}
+            sx={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: 3,
+              fontWeight: 500,
+              color: timeLeft > 0 ? "text.secondary" : "#D2686E",
+              cursor: timeLeft === 0 && !isResending ? "pointer" : "default",
+              userSelect: "none",
+            }}
           >
-            Back
-          </MDButton>
+            {timeLeft > 0
+              ? `Resend OTP in ${formatTime(timeLeft)}`
+              : isResending
+                ? "Sending..."
+                : "Resend OTP"}
+          </MDTypography>
 
-          <MDLoadingButton
-            loading={isLoading}
-            disabled={!isOtpComplete}
-            onClick={handleSubmit}
-            sx={{ width: "140px", py: 1.25 }}
-          >
-            Verify OTP
-          </MDLoadingButton>
-        </Box>
-      </Paper>
+          <Divider sx={{ width: "100%", mb: 3 }} />
+
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+            <MDButton
+              variant="outlined"
+              onClick={() => navigate("/register/user-details-verification")}
+              startIcon={<ArrowBackIosNew sx={{ fontSize: 14 }} />}
+              sx={{ width: "140px", py: 1.25 }}
+            >
+              Back
+            </MDButton>
+
+            <MDLoadingButton
+              loading={isLoading}
+              disabled={!isOtpComplete}
+              onClick={handleSubmit}
+              sx={{ width: "140px", py: 1.25 }}
+            >
+              Verify OTP
+            </MDLoadingButton>
+          </Box>
+        </MDFormCard>
+      </Box>
+
+      <Footer />
     </DashboardLayout>
   );
 }

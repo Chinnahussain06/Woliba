@@ -1,21 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, CircularProgress, useTheme } from "@mui/material";
+
+// MUI
+import { Box, CircularProgress, Divider, useTheme } from "@mui/material";
+
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 // Components
-import DashboardLayout from "@/src/Layouts/dashboardLayout";
+import DashboardLayout from "@/src/Layouts/DashboardLayout";
+import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
+import Footer from "@/src/Layouts/Footer";
+
 import MDLoader from "@/src/components/MDLoader";
 import MDTypography from "@/src/components/MDTypography";
 import MDButton from "@/src/components/MDButton";
+import MDFormCard from "@/src/components/MDFormCard";
+import MDAlert from "@/src/components/MDAlert";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
+
 import {
   fetchPillars,
   submitRegistration,
 } from "@/src/redux/thunks/registrationThunks";
+
 import { togglePillar } from "@/src/redux/slices/registrationSlice";
+
 import {
   selectPillars,
   selectPillarsLoading,
@@ -32,7 +43,9 @@ const WellbeingPillars = () => {
 
   const pillars = useAppSelector(selectPillars) || [];
   const pillarsLoading = useAppSelector(selectPillarsLoading);
+
   const selectedIds = useAppSelector(selectSelectedPillars);
+
   const payload = useAppSelector(selectRegistrationPayload);
 
   useEffect(() => {
@@ -45,8 +58,11 @@ const WellbeingPillars = () => {
 
   const handleDone = async () => {
     if (selectedIds.length !== 3) return;
+
     setIsSubmitting(true);
+
     const result = await dispatch(submitRegistration(payload));
+
     if (submitRegistration.fulfilled.match(result)) {
       navigate("/welcome");
     } else {
@@ -56,7 +72,7 @@ const WellbeingPillars = () => {
 
   if (isSubmitting) {
     return (
-      <DashboardLayout>
+     
         <Box
           sx={{
             display: "flex",
@@ -67,165 +83,200 @@ const WellbeingPillars = () => {
         >
           <MDLoader text="Getting your wellness journey ready..." size="25em" />
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   return (
     <DashboardLayout>
+      <DashboardNavbar />
+
       <Box
+        component="main"
         sx={{
-          width: "100%",
-          maxWidth: "1200px",
-          bgcolor: theme.palette.background.paper,
-          borderRadius: "24px",
-          boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.04)",
-          p: { xs: 3, md: 6 },
-          mx: "auto",
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: 2,
+          py: 4,
         }}
       >
-        <Box sx={{ mb: 5, textAlign: "center" }}>
-          <MDTypography
-            variant="h5"
-            sx={{ color: theme.palette.secondary.main, fontWeight: 700 }}
-          >
-            Select any 3 well-being pillars goal you want to achieve
-          </MDTypography>
-        </Box>
+        <MDFormCard title="Select any 3 well-being pillars goal you want to achieve — at least one is required." maxWidth="70%">
+          <MDAlert />
 
-        {pillarsLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-            <CircularProgress sx={{ color: theme.palette.primary.main }} />
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
-              },
-              gap: "12px",
-            }}
-          >
-            {pillars.map((item) => {
-              const isSelected = selectedIds.includes(item.id);
-              const rank = selectedIds.indexOf(item.id) + 1;
+          {pillarsLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                py: 8,
+              }}
+            >
+              <CircularProgress
+                sx={{
+                  color: theme.palette.primary.main,
+                }}
+              />
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                },
+                gap: "12px",
+              }}
+            >
+              {pillars.map((item) => {
+                const isSelected = selectedIds.includes(item.id);
 
-              return (
-                <Box
-                  key={item.id}
-                  onClick={() => handleSelect(item.id)}
-                  sx={{
-                    p: "14px 16px",
-                    borderRadius: "12px",
-                    border: "1.5px solid",
-                    borderColor: theme.palette.divider,
-                    bgcolor: theme.palette.background.paper,
-                    cursor: "pointer",
-                    transition: "all 0.15s ease-in-out",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: "12px",
-                    "&:hover": {
-                      boxShadow: `0 4px 12px ${theme.palette.primary.main}14`,
-                    },
-                  }}
-                >
-                  {/* Rank Badge */}
+                const rank = selectedIds.indexOf(item.id) + 1;
+
+                return (
                   <Box
+                    key={item.id}
+                    onClick={() => handleSelect(item.id)}
                     sx={{
-                      width: 26,
-                      height: 26,
-                      borderRadius: "6px",
-                      bgcolor: isSelected
-                        ? theme.palette.primary.main
-                        : "transparent",
+                      p: "25px 16px",
+                      borderRadius: "12px",
                       border: "1.5px solid",
+
                       borderColor: isSelected
                         ? theme.palette.primary.main
                         : theme.palette.divider,
-                      color: isSelected
-                        ? theme.palette.primary.contrastText
-                        : "transparent",
+
+                      bgcolor: theme.palette.background.paper,
+
+                      cursor: "pointer",
+
+                      transition: "all 0.15s ease-in-out",
+
                       display: "flex",
+                      flexDirection: "row",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: 700,
-                      fontSize: "0.8rem",
-                      flexShrink: 0,
-                      transition: "all 0.15s ease",
-                    }}
-                  >
-                    {isSelected ? rank : ""}
-                  </Box>
+                      gap: "12px",
 
-                  {/* Pillar Info */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                      flex: 1,
+                      "&:hover": {
+                        boxShadow: `0 4px 12px ${theme.palette.primary.main}14`,
+                      },
                     }}
                   >
-                    <MDTypography
-                      variant="body1"
+                    {/* Rank Badge */}
+                    <Box
                       sx={{
-                        color: theme.palette.secondary.main,
-                        fontWeight: 500,
-                        lineHeight: 1.3,
+                        width: 26,
+                        height: 26,
+
+                        borderRadius: "6px",
+
+                        bgcolor: isSelected
+                          ? theme.palette.primary.main
+                          : "transparent",
+
+                        border: "1.5px solid",
+
+                        borderColor: isSelected
+                          ? theme.palette.primary.main
+                          : theme.palette.divider,
+
+                        color: isSelected
+                          ? theme.palette.primary.contrastText
+                          : "transparent",
+
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+
+                        fontWeight: 700,
+                        fontSize: "0.8rem",
+
+                        flexShrink: 0,
+
+                        transition: "all 0.15s ease",
                       }}
                     >
-                      {item.pillar_title}
-                    </MDTypography>
-                    <MDTypography
-                      variant="body2"
+                      {isSelected ? rank : ""}
+                    </Box>
+
+                    {/* Pillar Info */}
+                    <Box
                       sx={{
-                        color: theme.palette.text.secondary,
-                        lineHeight: 1.5,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                        flex: 1,
                       }}
                     >
-                      {item.description}
-                    </MDTypography>
+                      <MDTypography
+                        variant="body1"
+                        sx={{
+                          color: theme.palette.secondary.main,
+                          fontWeight: 500,
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {item.pillar_title}
+                      </MDTypography>
+
+                      <MDTypography
+                        variant="body2"
+                        sx={{
+                          color: theme.palette.text.secondary,
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {item.description}
+                      </MDTypography>
+                    </Box>
                   </Box>
-                </Box>
-              );
-            })}
+                );
+              })}
+            </Box>
+          )}
+
+          <Divider sx={{ my: 3 }} />
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 2,
+            }}
+          >
+            <MDButton
+              variant="outlined"
+              onClick={() => window.history.back()}
+              startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.8rem" }} />}
+              sx={{
+                width: "160px",
+                py: 1.4,
+              }}
+            >
+              Back
+            </MDButton>
+
+            <MDButton
+              variant="contained"
+              disabled={selectedIds.length !== 3}
+              onClick={handleDone}
+              sx={{
+                width: "160px",
+                py: 1.4,
+              }}
+            >
+              Done
+            </MDButton>
           </Box>
-        )}
-
-        <Box
-          sx={{
-            mt: 6,
-            pt: 4,
-            borderTop: `1.5px solid ${theme.palette.divider}`,
-            display: "flex",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
-          <MDButton
-            variant="outlined"
-            onClick={() => window.history.back()}
-            startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.8rem" }} />}
-            sx={{ width: "160px", py: 1.4 }}
-          >
-            Back
-          </MDButton>
-
-          <MDButton
-            variant="contained"
-            disabled={selectedIds.length !== 3}
-            onClick={handleDone}
-            sx={{ width: "160px", py: 1.4 }}
-          >
-            Done
-          </MDButton>
-        </Box>
+        </MDFormCard>
       </Box>
+
+      <Footer />
     </DashboardLayout>
   );
 };

@@ -3,22 +3,18 @@ import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import {
-  Box,
-  Paper,
-  InputAdornment,
-  IconButton,
-  Divider,
-  Alert,
-} from "@mui/material";
+import { Box, InputAdornment, IconButton, Divider } from "@mui/material";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
 
 // Components
-import MDTypography from "@/src/components/MDTypography";
 import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDFormField from "@/src/components/MDFormField";
-import DashboardLayout from "@/src/Layouts/dashboardLayout";
+import MDFormCard from "@/src/components/MDFormCard";
+import MDAlert from "@/src/components/MDAlert";
+import DashboardLayout from "@/src/Layouts/DashboardLayout";
+import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
+import Footer from "@/src/Layouts/Footer";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
@@ -41,7 +37,6 @@ function CompanyVerification() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  // Clear error when component unmounts
   useEffect(() => {
     return () => {
       dispatch(clearError());
@@ -69,95 +64,81 @@ function CompanyVerification() {
 
   return (
     <DashboardLayout>
-      <Paper
-        elevation={0}
+      <DashboardNavbar />
+
+      <Box
+        component="main"
         sx={{
-          width: "100%",
-          maxWidth: "460px",
-          p: { xs: 4, md: 5 },
-          borderRadius: "24px",
-          border: "1px solid rgba(226, 232, 240, 0.8)",
-          backgroundColor: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(12px)",
-          boxShadow: "0px 20px 50px rgba(26,58,95,0.05)",
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: 2,
+          py: 4,
         }}
       >
-        <MDTypography
-          variant="h5"
-          sx={{
-            color: "#1E3A5F",
-            fontWeight: 700,
-            textAlign: "center",
-            mb: 4,
-          }}
-        >
-          Registration
-        </MDTypography>
+        <MDFormCard title="Registration">
+          <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
-        {apiError && (
-          <Alert
-            severity="error"
-            sx={{ mb: 3, borderRadius: "12px" }}
-            onClose={() => dispatch(clearError())}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={companyValidations[0]}
+            onSubmit={handleSubmit}
           >
-            {apiError}
-          </Alert>
-        )}
+            {({ isSubmitting, dirty }) => (
+              <Form>
+                <MDFormField
+                  label={companyNameField.label}
+                  name={companyNameField.name}
+                  placeholder={companyNameField.placeholder}
+                  required
+                />
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={companyValidations[0]}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting, dirty }) => (
-            <Form>
-              <MDFormField
-                label={companyNameField.label}
-                name={companyNameField.name}
-                placeholder={companyNameField.placeholder}
-                required
-              />
+                <MDFormField
+                  label={passwordField.label}
+                  name={passwordField.name}
+                  type={showPassword ? "text" : "password"}
+                  placeholder={passwordField.placeholder}
+                  required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <VisibilityOutlined />
+                          ) : (
+                            <VisibilityOffOutlined />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
 
-              <MDFormField
-                label={passwordField.label}
-                name={passwordField.name}
-                type={showPassword ? "text" : "password"}
-                placeholder={passwordField.placeholder}
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? (
-                          <VisibilityOutlined />
-                        ) : (
-                          <VisibilityOffOutlined />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+                <Divider sx={{ my: 3 }} />
 
-              <Divider sx={{ my: 3 }} />
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <MDLoadingButton
+                    type="submit"
+                    loading={isLoading}
+                    disabled={isSubmitting || !dirty}
+                    sx={{ width: "100%", maxWidth: "190px" }}
+                  >
+                    Next
+                  </MDLoadingButton>
+                </Box>
+              </Form>
+            )}
+          </Formik>
+        </MDFormCard>
+      </Box>
 
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <MDLoadingButton
-                  type="submit"
-                  loading={isLoading}
-                  disabled={isSubmitting || !dirty}
-                  sx={{ width: "100%", maxWidth: "190px" }}
-                >
-                  Next
-                </MDLoadingButton>
-              </Box>
-            </Form>
-          )}
-        </Formik>
-      </Paper>
+      <Footer />
     </DashboardLayout>
   );
 }
