@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { getEmailValidation, getNameValidation } from "@/src/utils/validator";
 
 export const form = {
   formId: "user-details-verification-form",
@@ -52,23 +53,11 @@ export const initialValues = {
 };
 
 export const userDetailsValidationSchema = Yup.object().shape({
-  [emailId.name]: Yup.string()
-    .email("Please enter a valid email format")
-    .required("Email ID is required"),
+  [emailId.name]: getEmailValidation(),
 
-  [firstName.name]: Yup.string()
-    .matches(
-      /^[a-zA-Z\s]+$/,
-      "First name cannot contain numbers or special characters",
-    )
-    .required("First name is required"),
+  [firstName.name]: getNameValidation(),
 
-  [lastName.name]: Yup.string()
-    .matches(
-      /^[a-zA-Z\s]+$/,
-      "Last name cannot contain numbers or special characters",
-    )
-    .required("Last name is required"),
+  [lastName.name]: getNameValidation(),
 
   [companyName.name]: Yup.string().required("Company name is required"),
 });

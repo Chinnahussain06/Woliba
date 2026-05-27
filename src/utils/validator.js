@@ -19,3 +19,25 @@ export const getConfirmPasswordValidation = (passwordKey) => {
     .oneOf([Yup.ref(passwordKey), null], "Password doesn't match")
     .required("Confirm password is required.");
 };
+
+export const getEmailValidation = () => {
+  return Yup.string()
+    .required("Email address is required")
+    .email("Email address is invalid")
+    .matches(
+      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]/,
+      "Invalid email address format",
+    );
+};
+
+export const getNameValidation = () => {
+  return Yup.string()
+    .trim()
+    .strict(true)
+    .max(100, "Maximum 100 characters")
+    .matches(
+      /^[a-zA-Z0-9][a-zA-Z0-9_:-\s]*$/,
+      "Must start with a letter or number and only contain alphanumeric characters, underscores (_), hyphens (-), colons (:), and spaces",
+    )
+    .matches(/^[^\s].*$/, "Cannot start with a space");
+};
