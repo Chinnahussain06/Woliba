@@ -15,6 +15,7 @@ import DashboardLayout from "@/src/Layouts/dashboardLayout";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { saveUserDetails } from "../../redux/thunks/registrationThunks";
 import { clearError } from "../../redux/slices/registrationSlice";
+
 import {
   selectIsLoading,
   selectError,
@@ -63,10 +64,12 @@ function UserDetailsVerification() {
         elevation={0}
         sx={{
           width: "100%",
-          maxWidth: "460px",
-          p: { xs: 4, md: 5 },
-          borderRadius: "24px",
-          border: "1px solid rgba(226,232,240,0.8)",
+          maxWidth: 480,
+          p: { xs: 4, sm: 5 },
+          borderRadius: 4,
+          border: "1px solid #E6EAF0",
+          backgroundColor: "#fff",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
         }}
       >
         <MDTypography variant="h5" sx={{ textAlign: "center", mb: 4 }}>
@@ -74,7 +77,11 @@ function UserDetailsVerification() {
         </MDTypography>
 
         {apiError && (
-          <Alert severity="error" onClose={() => dispatch(clearError())}>
+          <Alert
+            severity="error"
+            onClose={() => dispatch(clearError())}
+            sx={{ mb: 3 }}
+          >
             {apiError}
           </Alert>
         )}
@@ -91,53 +98,61 @@ function UserDetailsVerification() {
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ dirty, isSubmitting }) => {
-            return (
-              <Form>
-                <MDFormField
-                  label={emailId.label}
-                  name={emailId.name}
-                  placeholder={emailId.placeholder}
-                  required
-                />
+          {({ dirty }) => (
+            <Form>
+              <MDFormField
+                label={emailId.label}
+                name={emailId.name}
+                placeholder={emailId.placeholder}
+                required
+              />
 
-                <MDFormField
-                  label={fn.label}
-                  name={fn.name}
-                  placeholder={fn.placeholder}
-                  required
-                />
+              <MDFormField
+                label={fn.label}
+                name={fn.name}
+                placeholder={fn.placeholder}
+                required
+              />
 
-                <MDFormField
-                  label={ln.label}
-                  name={ln.name}
-                  placeholder={ln.placeholder}
-                  required
-                />
+              <MDFormField
+                label={ln.label}
+                name={ln.name}
+                placeholder={ln.placeholder}
+                required
+              />
 
-                <MDFormField
-                  label={cn.label}
-                  name={cn.name}
-                  disabled
-                  value={companyName}
-                  required
-                />
+              <MDFormField
+                label={cn.label}
+                name={cn.name}
+                disabled
+                value={companyName}
+                required
+              />
 
-                <Divider sx={{ my: 3 }} />
+              <Divider sx={{ my: 4 }} />
 
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <MDLoadingButton
-                    type="submit"
-                    loading={isLoading}
-                    disabled={isSubmitting || !dirty}
-                    sx={{ width: "100%", maxWidth: "190px" }}
-                  >
-                    Verify email
-                  </MDLoadingButton>
-                </Box>
-              </Form>
-            );
-          }}
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <MDLoadingButton
+                  type="submit"
+                  loading={isLoading}
+                  disabled={!dirty}
+                  sx={{
+                    width: "100%",
+                    maxWidth: 220,
+                    py: 1.5,
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    backgroundColor: "#D2686E",
+                    "&:hover": {
+                      backgroundColor: "#C2555B",
+                    },
+                  }}
+                >
+                  Verify email
+                </MDLoadingButton>
+              </Box>
+            </Form>
+          )}
         </Formik>
       </Paper>
     </DashboardLayout>

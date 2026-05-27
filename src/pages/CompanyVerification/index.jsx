@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
@@ -11,13 +11,8 @@ import {
   Divider,
   Alert,
 } from "@mui/material";
-
-// Icons
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
-
-// Theme
-import { palette } from "@/src/assets/theme/base/palette";
 
 // Components
 import MDTypography from "@/src/components/MDTypography";
@@ -26,18 +21,16 @@ import MDFormField from "@/src/components/MDFormField";
 import DashboardLayout from "@/src/Layouts/dashboardLayout";
 
 // Redux
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { verifyCompany } from "../../redux/thunks/registrationThunks";
-import { clearError } from "../../redux/slices/registrationSlice";
+import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
+import { clearError } from "@/src/redux/slices/registrationSlice";
+import { verifyCompany } from "@/src/redux/thunks/registrationThunks";
 import {
   selectIsLoading,
   selectError,
-  selectCompanyName,
-} from "../../redux/selectors/registrationSelectors";
+} from "@/src/redux/selectors/registrationSelectors";
 
 // Schema
 import { form, initialValues, companyValidations } from "./schema";
-
 
 function CompanyVerification() {
   const navigate = useNavigate();
@@ -45,9 +38,15 @@ function CompanyVerification() {
 
   const isLoading = useAppSelector(selectIsLoading);
   const apiError = useAppSelector(selectError);
-  const companyName = useAppSelector(selectCompanyName);
 
   const [showPassword, setShowPassword] = useState(false);
+
+  // Clear error when component unmounts
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
 
   const handleSubmit = async (values) => {
     try {
@@ -60,7 +59,7 @@ function CompanyVerification() {
 
       navigate("/register/user-details-verification");
     } catch (err) {
-      console.log("ERROR:", err);
+      console.error("Company Verification Failed:", err);
     }
   };
 
@@ -81,8 +80,6 @@ function CompanyVerification() {
           backgroundColor: "rgba(255,255,255,0.95)",
           backdropFilter: "blur(12px)",
           boxShadow: "0px 20px 50px rgba(26,58,95,0.05)",
-          display: "flex",
-          flexDirection: "column",
         }}
       >
         <MDTypography
@@ -108,62 +105,57 @@ function CompanyVerification() {
         )}
 
         <Formik
-          initialValues={{
-            ...initialValues,
-            companyName: companyName || "",
-          }}
+          initialValues={initialValues}
           validationSchema={companyValidations[0]}
           onSubmit={handleSubmit}
-          enableReinitialize
         >
-          {({ dirty, isSubmitting }) => {
-            return (
-              <Form>
-                <MDFormField
-                  label={companyNameField.label}
-                  name={companyNameField.name}
-                  placeholder={companyNameField.placeholder}
-                  required
-                />
+          {({ isSubmitting, dirty }) => (
+            <Form>
+              <MDFormField
+                label={companyNameField.label}
+                name={companyNameField.name}
+                placeholder={companyNameField.placeholder}
+                required
+              />
 
-                <MDFormField
-                  label={passwordField.label}
-                  name={passwordField.name}
-                  type={showPassword ? "text" : "password"}
-                  placeholder={passwordField.placeholder}
-                  required
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          sx={{ color: palette.primary.main}}
-                        >
-                          {showPassword ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+              <MDFormField
+                label={passwordField.label}
+                name={passwordField.name}
+                type={showPassword ? "text" : "password"}
+                placeholder={passwordField.placeholder}
+                required
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityOutlined />
+                        ) : (
+                          <VisibilityOffOutlined />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-                <Divider sx={{ my: 3 }} />
+              <Divider sx={{ my: 3 }} />
 
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <MDLoadingButton
-                    type="submit"
-                    loading={isLoading}
-                    disabled={isSubmitting || !dirty}
-                    sx={{
-                      width: "100%",
-                      maxWidth: "190px",
-                    }}
-                  >
-                    Next
-                  </MDLoadingButton>
-                </Box>
-              </Form>
-            );
-          }}
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <MDLoadingButton
+                  type="submit"
+                  loading={isLoading}
+                  disabled={isSubmitting || !dirty}
+                  sx={{ width: "100%", maxWidth: "190px" }}
+                >
+                  Next
+                </MDLoadingButton>
+              </Box>
+            </Form>
+          )}
         </Formik>
       </Paper>
     </DashboardLayout>

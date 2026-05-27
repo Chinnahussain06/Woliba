@@ -1,272 +1,218 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 import {
   verifyCompany,
   saveUserDetails,
   submitRegistration,
+  verifyOtp,
+  resendOtp,
+  fetchInterests,
+  fetchPillars,
 } from "../thunks/registrationThunks";
 
-import { resendOtp, verifyOtp } from "../thunks/otpThunks";
-
 const initialState = {
-  // Step Handling
-  currentStep: 1,
-
-  // Company
-  companyName: "",
+  // company details
   companyId: null,
+  companyName: "",
 
-  // User Details
+  // user details
   email: "",
   firstName: "",
   lastName: "",
 
-  // OTP
+  // OTP verification
   otpToken: null,
-  otp: Array(6).fill(""),
   otpVerified: false,
-  resendCooldown: 180,
 
-  // Login Credentials
+  // profile details
   password: "",
   dob: "",
   phone: "",
   workAnniversary: "",
   acceptedPolicy: false,
 
-  // Final Registration
+  // Interests
+  interests: [],
+  selectedInterests: [],
+
+  // Pillars
+  pillars: [],
+  selectedPillars: [],
+
+  // Registration completion
   authToken: null,
   registrationComplete: false,
 
-  // API States
-  isLoading: false,
-  error: null,
-  successMessage: null,
-
-  // API Status
-  status: "idle",
+  // Async State
+  status: "idle", // "idle" | "loading" | "success" | "failed"
   resendStatus: "idle",
+  error: null,
 };
 
-const pending = (state) => {
-  state.isLoading = true;
+const onPending = (state) => {
   state.status = "loading";
   state.error = null;
 };
 
-const rejected = (state, action) => {
-  state.isLoading = false;
+const onRejected = (state, { payload }) => {
   state.status = "failed";
 
-  state.error = action.payload || "Something went wrong";
+  if (typeof payload === "string") {
+    state.error = payload;
+  } else if (payload?.message) {
+    state.error = payload.message;
+  } else {
+    state.error = "Something went wrong";
+  }
 };
 
 const registrationSlice = createSlice({
   name: "registration",
-
   initialState,
 
   reducers: {
-    // Basic Setters
-    setCompanyName: (state, action) => {
-      state.companyName = action.payload;
+    // company verification
+    setCompanyName: (state, { payload }) => {
+      state.companyName = payload;
     },
 
-    setEmail: (state, action) => {
-      state.email = action.payload;
+    // user details
+    setEmail: (state, { payload }) => {
+      state.email = payload;
+    },
+    setFirstName: (state, { payload }) => {
+      state.firstName = payload;
+    },
+    setLastName: (state, { payload }) => {
+      state.lastName = payload;
     },
 
-    setFirstName: (state, action) => {
-      state.firstName = action.payload;
+    // profile details
+    setPassword: (state, { payload }) => {
+      state.password = payload;
+    },
+    setDob: (state, { payload }) => {
+      state.dob = payload;
+    },
+    setPhone: (state, { payload }) => {
+      state.phone = payload;
+    },
+    setWorkAnniversary: (state, { payload }) => {
+      state.workAnniversary = payload;
+    },
+    setAcceptedPolicy: (state, { payload }) => {
+      state.acceptedPolicy = payload;
     },
 
-    setLastName: (state, action) => {
-      state.lastName = action.payload;
-    },
-
-    setPassword: (state, action) => {
-      state.password = action.payload;
-    },
-
-    setDob: (state, action) => {
-      state.dob = action.payload;
-    },
-
-    setPhone: (state, action) => {
-      state.phone = action.payload;
-    },
-
-    setWorkAnniversary: (state, action) => {
-      state.workAnniversary = action.payload;
-    },
-
-    setAcceptedPolicy: (state, action) => {
-      state.acceptedPolicy = action.payload;
-    },
-
-    setCurrentStep: (state, action) => {
-      state.currentStep = action.payload;
-    },
-
-    setOtpDigit: (state, action) => {
-      const { index, value } = action.payload;
-
-      state.otp[index] = value;
-    },
-
-    setOtpTimer: (state, action) => {
-      state.resendCooldown = action.payload;
-    },
-
-    tickResendTimer: (state) => {
-      if (state.resendCooldown > 0) {
-        state.resendCooldown -= 1;
+    // Intersests
+    toggleInterest: (state, { payload }) => {
+      if (state.selectedInterests.includes(payload)) {
+        state.selectedInterests = state.selectedInterests.filter(
+          (id) => id !== payload,
+        );
+      } else {
+        state.selectedInterests.push(payload);
       }
     },
 
+    // pillars
+    togglePillar: (state, { payload }) => {
+      if (state.selectedPillars.includes(payload)) {
+        state.selectedPillars = state.selectedPillars.filter(
+          (id) => id !== payload,
+        );
+      } else if (state.selectedPillars.length < 3) {
+        state.selectedPillars.push(payload);
+      }
+    },
+
+    // utility
     clearError: (state) => {
       state.error = null;
     },
 
-    clearSuccessMessage: (state) => {
-      state.successMessage = null;
-    },
-
-    resetRegistration: () => initialState,
+    resetRegistration: (state) => ({
+      ...initialState,
+      interests: state.interests,
+      pillars: state.pillars,
+    }),
   },
 
   extraReducers: (builder) => {
     builder
 
-      // ========================================
-      // VERIFY COMPANY
-      // ========================================
-
-      .addCase(verifyCompany.pending, pending)
-
-      .addCase(verifyCompany.rejected, rejected)
-
-      .addCase(verifyCompany.fulfilled, (state, action) => {
-        state.isLoading = false;
-
+      // company verification
+      .addCase(verifyCompany.pending, onPending)
+      .addCase(verifyCompany.rejected, onRejected)
+      .addCase(verifyCompany.fulfilled, (state, { payload }) => {
+        const company = payload?.data?.[0];
         state.status = "success";
-
-        const company = action.payload?.data?.[0];
-
-        state.companyId = company?.id || null;
-
-        state.companyName = company?.company_name || "";
-
-        state.currentStep = 2;
+        state.companyId = company?.id ?? null;
+        state.companyName = company?.company_name ?? "";
       })
 
-      // ========================================
-      // SAVE USER DETAILS
-      // ========================================
-
-      .addCase(saveUserDetails.pending, pending)
-
-      .addCase(saveUserDetails.rejected, rejected)
-
-      .addCase(saveUserDetails.fulfilled, (state, action) => {
-        state.isLoading = false;
-
+      // save user details
+      .addCase(saveUserDetails.pending, onPending)
+      .addCase(saveUserDetails.rejected, onRejected)
+      .addCase(saveUserDetails.fulfilled, (state, { payload, meta }) => {
         state.status = "success";
-
-        // API RESPONSE:
-        // action.payload.data.token
-
-        state.otpToken = action.payload?.data?.token || null;
-
-        // Save user details
-        state.email = action.meta.arg.mail;
-
-        state.firstName = action.meta.arg.fname;
-
-        state.lastName = action.meta.arg.lname;
-
-        state.successMessage =
-          action.payload?.data?.message || "OTP sent successfully";
-
-        state.currentStep = 3;
+        state.otpToken = payload?.data?.token ?? null;
+        state.email = meta.arg.mail;
+        state.firstName = meta.arg.fname;
+        state.lastName = meta.arg.lname;
       })
 
-      // ========================================
-      // VERIFY OTP
-      // ========================================
-
-      .addCase(verifyOtp.pending, pending)
-
-      .addCase(verifyOtp.rejected, rejected)
-
-      .addCase(verifyOtp.fulfilled, (state, action) => {
-        state.isLoading = false;
-
+      // OTP verification
+      .addCase(verifyOtp.pending, onPending)
+      .addCase(verifyOtp.rejected, onRejected)
+      .addCase(verifyOtp.fulfilled, (state) => {
         state.status = "success";
-
         state.otpVerified = true;
-
-        state.successMessage =
-          action.payload?.data || "OTP verified successfully";
-
-        state.currentStep = 4;
       })
 
-      // ========================================
-      // RESEND OTP
-      // ========================================
-
+      // resend OTP
       .addCase(resendOtp.pending, (state) => {
         state.resendStatus = "loading";
-
         state.error = null;
       })
-
-      .addCase(resendOtp.rejected, (state, action) => {
+      .addCase(resendOtp.rejected, (state, { payload }) => {
         state.resendStatus = "failed";
-
-        state.error = action.payload || "Failed to resend OTP";
+        state.error = payload ?? "Failed to resend OTP";
       })
-
-      .addCase(resendOtp.fulfilled, (state, action) => {
+      .addCase(resendOtp.fulfilled, (state, { payload }) => {
         state.resendStatus = "success";
-
-        // IMPORTANT
-        // resend API returns NEW token
-
-        state.otpToken = action.payload?.data?.token || null;
-
-        state.otp = Array(6).fill("");
-
-        state.resendCooldown = 180;
-
-        state.successMessage =
-          action.payload?.data?.message || "OTP resent successfully";
+        state.otpToken = payload?.data?.token ?? null;
       })
 
-      // ========================================
-      // FINAL REGISTRATION
-      // ========================================
-
-      .addCase(submitRegistration.pending, pending)
-
-      .addCase(submitRegistration.rejected, rejected)
-
-      .addCase(submitRegistration.fulfilled, (state, action) => {
-        state.isLoading = false;
-
+      // fetch interests
+      .addCase(fetchInterests.pending, onPending)
+      .addCase(fetchInterests.rejected, onRejected)
+      .addCase(fetchInterests.fulfilled, (state, { payload }) => {
         state.status = "success";
+        state.interests = payload ?? [];
+      })
 
-        state.authToken = action.payload?.data?.token || null;
+      // fetch pillars
+      .addCase(fetchPillars.pending, onPending)
+      .addCase(fetchPillars.rejected, onRejected)
+      .addCase(fetchPillars.fulfilled, (state, { payload }) => {
+        state.status = "success";
+        state.pillars = payload ?? [];
+      })
 
+      // final submission
+      .addCase(submitRegistration.pending, onPending)
+      .addCase(submitRegistration.rejected, onRejected)
+      .addCase(submitRegistration.fulfilled, (state, { payload }) => {
+        state.status = "success";
+        state.authToken = payload?.data?.token ?? null;
         state.registrationComplete = true;
-
-        state.currentStep = 7;
-
-        state.successMessage = "Registration completed successfully";
       });
   },
 });
+
+// ─────────────────────────────────────────────
+// Exports
+// ─────────────────────────────────────────────
 
 export const {
   setCompanyName,
@@ -278,12 +224,9 @@ export const {
   setPhone,
   setWorkAnniversary,
   setAcceptedPolicy,
-  setCurrentStep,
-  setOtpDigit,
-  setOtpTimer,
-  tickResendTimer,
+  toggleInterest,
+  togglePillar,
   clearError,
-  clearSuccessMessage,
   resetRegistration,
 } = registrationSlice.actions;
 

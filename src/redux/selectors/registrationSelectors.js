@@ -1,68 +1,52 @@
-export const selectCurrentStep = (s) => s.registration.currentStep;
+const r = (s) => s.registration;
 
-export const selectCompanyId = (s) => s.registration.companyId;
+//  Company verification
+export const selectCompanyId = (s) => r(s).companyId;
+export const selectCompanyName = (s) => r(s).companyName;
 
-export const selectCompanyName = (s) => s.registration.companyName;
+// User Details verification
+export const selectEmail = (s) => r(s).email;
+export const selectFirstName = (s) => r(s).firstName;
+export const selectLastName = (s) => r(s).lastName;
 
-export const selectEmail = (s) => s.registration.email;
+//  OTP verification
+export const selectOtpToken = (s) => r(s).otpToken;
+export const selectOtpVerified = (s) => r(s).otpVerified;
 
-export const selectFirstName = (s) => s.registration.firstName;
+// Interests
+export const selectInterests = (s) => r(s).interests;
+export const selectAllInterests = (s) => r(s).interests;
+export const selectSelectedInterests = (s) => r(s).selectedInterests;
+export const selectInterestsStatus = (s) => r(s).status;
 
-export const selectLastName = (s) => s.registration.lastName;
+//  Pillars
+export const selectPillars = (s) => r(s).pillars;
+export const selectSelectedPillars = (s) => r(s).selectedPillars;
+export const selectPillarsLoading = (s) => r(s).status === "loading";
 
-export const selectOtpToken = (s) => s.registration.otpToken;
+//  Completion
+export const selectAuthToken = (s) => r(s).authToken;
+export const selectRegistrationComplete = (s) => r(s).registrationComplete;
 
-export const selectOtpVerified = (s) => s.registration.otpVerified;
+//  Async State
+export const selectStatus = (s) => r(s).status;
+export const selectResendStatus = (s) => r(s).resendStatus;
+export const selectError = (s) => r(s).error;
+export const selectIsLoading = (s) => r(s).status === "loading";
 
-export const selectResendCooldown = (s) => s.registration.resendCooldown;
-
-export const selectIsLoading = (s) => s.registration.isLoading;
-
-export const selectError = (s) => s.registration.error;
-
-export const selectAuthToken = (s) => s.registration.authToken;
-
-export const selectRegistrationComplete = (s) =>
-  s.registration.registrationComplete;
-
-/* ADD THESE */
-
-export const selectSuccessMessage = (s) => s.registration.successMessage;
-
-export const selectOtpTimer = (s) => s.registration.otpTimer;
-
-export const selectStatus = (s) => s.registration.status;
-
-export const selectResendStatus = (s) => s.registration.resendStatus;
-
-/* OPTIONAL ALIAS */
-
-export const selectRegistrationEmail = (s) => s.registration.email;
-
-/* Payload Selector */
-
+// ── Payload (for final registration API) ─────
 export const selectRegistrationPayload = (s) => ({
-  fname: s.registration.firstName,
-
-  lname: s.registration.lastName,
-
-  password: s.registration.password,
-
-  birthday: s.registration.dob,
-
-  phone_number: s.registration.phone,
-
-  token: s.registration.otpToken,
-
-  accepted_privacy_policy: s.registration.acceptedPolicy,
-
-  areas_of_interest: s.interests.selectedIds,
-
-  wellbeing_pillars: s.pillars.selectedIds,
-
+  fname: r(s).firstName,
+  lname: r(s).lastName,
+  email: r(s).email,
+  password: r(s).password,
+  birthday: r(s).dob,
+  phone_number: r(s).phone,
+  token: r(s).otpToken,
+  accepted_privacy_policy: r(s).acceptedPolicy,
+  areas_of_interest: r(s).selectedInterests,
+  wellbeing_pillars: r(s).selectedPillars,
   time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-
   language_id: 1,
-
   user_type: 0,
 });

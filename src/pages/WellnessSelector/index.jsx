@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// MUI
 import {
   Box,
   Accordion,
@@ -7,23 +10,21 @@ import {
   CircularProgress,
   Chip,
 } from "@mui/material";
-
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 // Redux
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
 
-import { fetchInterests } from "../../redux/thunks/lookupThunks";
-
-import { toggleInterest } from "../../redux/slices/interestSlice";
-
+import { fetchInterests } from "@/src/redux/thunks/registrationThunks";
+import { toggleInterest } from "@/src/redux/slices/registrationSlice";
 import {
-  selectAllInterests,
+  selectInterests,
   selectInterestsStatus,
   selectSelectedInterests,
-} from "../../redux/selectors/interestSelectors";
-import { useNavigate } from "react-router-dom";
+} from "@/src/redux/selectors/registrationSelectors";
+
+// Components
 import DashboardLayout from "@/src/Layouts/dashboardLayout";
 import MDButton from "@/src/components/MDButton";
 import MDTypography from "@/src/components/MDTypography";
@@ -35,22 +36,20 @@ const WellnessSelector = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const interests = useAppSelector(selectAllInterests);
+  const interests = useAppSelector(selectInterests);
   const status = useAppSelector(selectInterestsStatus);
   const selectedIds = useAppSelector(selectSelectedInterests);
 
-  const isLoading = status === "loading";
-
   const [expanded, setExpanded] = useState(null);
 
-  // Fetch interests once
+  const isLoading = status === "loading";
+
   useEffect(() => {
     dispatch(fetchInterests());
   }, [dispatch]);
 
-  // Auto expand first category
   useEffect(() => {
-    if (interests.length > 0) {
+    if (interests.length > 0 && !expanded) {
       const firstCategory =
         interests[0]?.interest_type === "Other"
           ? "Other Sports"
@@ -58,15 +57,12 @@ const WellnessSelector = () => {
 
       setExpanded(firstCategory);
     }
-  }, [interests]);
+  }, [interests, expanded]);
 
-  // Group interests
   const groupedInterests = useMemo(() => {
     const map = {};
 
-    const safeInterests = Array.isArray(interests) ? interests : [];
-
-    safeInterests.forEach((item) => {
+    interests.forEach((item) => {
       const type =
         item.interest_type === "Other" ? "Other Sports" : item.interest_type;
 
@@ -82,7 +78,7 @@ const WellnessSelector = () => {
   };
 
   const handleNext = () => {
-    navigate("//wellbeing-pillars");
+    navigate("/register/wellbeing-pillars");
   };
 
   return (
@@ -100,14 +96,12 @@ const WellnessSelector = () => {
           flexDirection: "column",
         }}
       >
-        {/* Header */}
         <Box sx={{ p: 4, textAlign: "center" }}>
           <MDTypography variant="h6" sx={{ color: "#1E3A5F", fontWeight: 700 }}>
             Select all wellness interests that apply — at least one is required.
           </MDTypography>
         </Box>
 
-        {/* Body */}
         <Box
           sx={{
             flex: 1,
@@ -138,7 +132,6 @@ const WellnessSelector = () => {
                 elevation={0}
                 sx={{ "&:before": { display: "none" } }}
               >
-                {/* Category header */}
                 <AccordionSummary
                   expandIcon={<ArrowDropDownIcon sx={{ color: "#D2686E" }} />}
                 >
@@ -153,7 +146,6 @@ const WellnessSelector = () => {
                   </MDTypography>
                 </AccordionSummary>
 
-                {/* Chips */}
                 <AccordionDetails>
                   <Box
                     sx={{
@@ -224,10 +216,7 @@ const WellnessSelector = () => {
             variant="outlined"
             startIcon={<ArrowBackIosNewIcon />}
             onClick={handleBack}
-            sx={{
-              width: "140px",
-              py: 1.25,
-            }}
+            sx={{ width: "140px", py: 1.25 }}
           >
             Back
           </MDButton>
@@ -236,10 +225,7 @@ const WellnessSelector = () => {
             variant="contained"
             disabled={selectedIds.length === 0}
             onClick={handleNext}
-            sx={{
-              width: "140px",
-              py: 1.25,
-            }}
+            sx={{ width: "140px", py: 1.25 }}
           >
             Next
           </MDButton>

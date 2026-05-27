@@ -1,47 +1,42 @@
 import React, { useEffect } from "react";
 import { Box, Grid, CircularProgress } from "@mui/material";
-
-import DashboardLayout from "@/src/Layouts/dashboardLayout";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
-// Redux
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { fetchPillars } from "../../redux/thunks/lookupThunks";
-import { submitRegistration } from "../../redux/thunks/registrationThunks";
+// Layouts & Components
+import DashboardLayout from "@/src/Layouts/dashboardLayout";
+import MDLoader from "@/src/components/MDLoader";
+import MDTypography from "@/src/components/MDTypography";
+import MDButton from "@/src/components/MDButton";
 
+// Redux
+import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
+import { fetchPillars, submitRegistration } from "@/src/redux/thunks/registrationThunks";
+import { togglePillar } from "@/src/redux/slices/registrationSlice";
+
+// Selectors
 import {
   selectPillars,
   selectPillarsLoading,
-  selectSelectedPillarIds,
-} from "../../redux/selectors/pillarSelectors";
-
-import {
+  selectSelectedPillars,
   selectIsLoading,
   selectRegistrationPayload,
-} from "../../redux/selectors/registrationSelectors";
-
-import { setSelectedPillarIds } from "../../redux/slices/pillarSlice";
-
-import MDLoader from "../../components/MDLoader";
-import MDTypography from "@/src/components/MDTypography";
-import MDButton from "@/src/components/MDButton";
+} from "@/src/redux/selectors/registrationSelectors";
 
 const COLORS = {
   primaryRed: "#D2686E",
   textDark: "#1E3A5F",
   textMuted: "#8292A2",
-  borderColor: "#F0F2F5",
-  bgSelected: "#F8F9FB",
+  borderColor: "#E2E8F0",
+  bgSelected: "#FEF2F2",
 };
 
 const WellbeingPillars = () => {
   const dispatch = useAppDispatch();
 
   const pillars = useAppSelector(selectPillars) || [];
-  const isLoading = useAppSelector(selectPillarsLoading);
-  const selectedIds = useAppSelector(selectSelectedPillarIds);
-
-  const regLoading = useAppSelector(selectIsLoading);
+  const pillarsLoading = useAppSelector(selectPillarsLoading);
+  const selectedIds = useAppSelector(selectSelectedPillars);
+  const submitLoading = useAppSelector(selectIsLoading);
   const payload = useAppSelector(selectRegistrationPayload);
 
   useEffect(() => {
@@ -49,14 +44,7 @@ const WellbeingPillars = () => {
   }, [dispatch]);
 
   const handleSelect = (id) => {
-    let updated = [];
-    if (selectedIds.includes(id)) {
-      updated = selectedIds.filter((item) => item !== id);
-    } else {
-      if (selectedIds.length >= 3) return;
-      updated = [...selectedIds, id];
-    }
-    dispatch(setSelectedPillarIds(updated));
+    dispatch(togglePillar(id));
   };
 
   const handleDone = () => {
@@ -64,169 +52,153 @@ const WellbeingPillars = () => {
     dispatch(submitRegistration(payload));
   };
 
-  if (regLoading) {
-    return (
-      <MDLoader text="Submitting registration..." sx={{ height: "100vh" }} />
-    );
-  }
-
   return (
     <DashboardLayout>
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: "1200px",
-          bgcolor: "white",
-          borderRadius: "24px",
-          boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.04)",
-          p: { xs: 3, md: 6 },
-          mx: "auto",
-        }}
-      >
-        <Box sx={{ mb: 6, textAlign: "center" }}>
-          <MDTypography
-            variant="h5"
-            sx={{ color: COLORS.textDark, fontWeight: 700 }}
-          >
-            Select any 3 well-being pillars goal you want to achieve
-          </MDTypography>
+      {submitLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "70vh",
+          }}
+        >
+          <MDLoader text="Submitting registration..." size="5em" />
         </Box>
-
-        {isLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-            <CircularProgress sx={{ color: COLORS.primaryRed }} />
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: "1200px",
+            bgcolor: "white",
+            borderRadius: "24px",
+            boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.04)",
+            p: { xs: 3, md: 6 },
+            mx: "auto",
+          }}
+        >
+          <Box sx={{ mb: 6, textAlign: "center" }}>
+            <MDTypography
+              variant="h5"
+              sx={{ color: COLORS.textDark, fontWeight: 700 }}
+            >
+              Select any 3 well-being pillars goal you want to achieve
+            </MDTypography>
           </Box>
-        ) : (
-          <Grid container spacing={2} alignItems="stretch">
-            {pillars.map((item) => {
-              const selectedIndex = selectedIds.indexOf(item.id);
-              const isSelected = selectedIndex !== -1;
 
-              return (
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  key={item.id}
-                  sx={{ display: "flex" }}
-                >
-                  <Box
-                    onClick={() => handleSelect(item.id)}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      flex: 1, // Rule: Force card to fill Grid height
-                      alignItems: "flex-start",
-                      gap: 2,
-                      p: 2.5,
-                      cursor: "pointer",
-                      borderRadius: "12px",
-                      border: "1.5px solid",
-                      borderColor: isSelected
-                        ? COLORS.primaryRed
-                        : COLORS.borderColor,
-                      bgcolor: isSelected ? COLORS.bgSelected : "white",
-                      transition: "all 0.2s ease-in-out",
-                      "&:hover": {
-                        bgcolor: "#F4F7FA",
-                        borderColor: isSelected ? COLORS.primaryRed : "#D1D9E6",
-                      },
-                    }}
-                  >
-                    {/* Rank Box (1, 2, 3) */}
+          {pillarsLoading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
+              <CircularProgress sx={{ color: COLORS.primaryRed }} />
+            </Box>
+          ) : (
+            <Grid container spacing={3}>
+              {pillars.map((item) => {
+                const isSelected = selectedIds.includes(item.id);
+                const rank = selectedIds.indexOf(item.id) + 1;
+
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={item.id}>
                     <Box
+                      onClick={() => handleSelect(item.id)}
                       sx={{
-                        width: 22,
-                        height: 22,
-                        mt: 0.3,
-                        flexShrink: 0,
-                        borderRadius: "4px",
-                        border: isSelected ? "none" : "1.5px solid #CBD5E1",
-                        bgcolor: isSelected ? COLORS.primaryRed : "transparent",
+                        height: "100%",
+                        p: 3,
+                        borderRadius: "16px",
+                        border: "2px solid",
+                        borderColor: isSelected ? COLORS.primaryRed : COLORS.borderColor,
+                        bgcolor: isSelected ? COLORS.bgSelected : "white",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease-in-out",
                         display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        flexDirection: "column",
+                        "&:hover": {
+                          borderColor: isSelected ? COLORS.primaryRed : "#CBD5E1",
+                          boxShadow: "0 4px 12px rgba(210, 104, 110, 0.1)",
+                        },
                       }}
                     >
-                      {isSelected && (
-                        <MDTypography
-                          sx={{
-                            color: "white",
-                            fontSize: "0.8rem",
-                            fontWeight: 700,
-                          }}
-                        >
-                          {selectedIndex + 1}
-                        </MDTypography>
-                      )}
-                    </Box>
+                      {/* Number Indicator */}
+                      <Box
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: "8px",
+                          bgcolor: isSelected ? COLORS.primaryRed : "#F1F5F9",
+                          color: isSelected ? "white" : "#64748B",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontWeight: 700,
+                          fontSize: "0.9rem",
+                          mb: 2,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {isSelected ? rank : ""}
+                      </Box>
 
-                    {/* Content */}
-                    <Box sx={{ flex: 1 }}>
+                      {/* Title */}
                       <MDTypography
                         sx={{
-                          fontSize: "0.95rem",
+                          fontSize: "1.05rem",
                           color: COLORS.textDark,
                           fontWeight: 700,
-                          mb: 0.5,
-                          lineHeight: 1.2,
+                          mb: 1.5,
+                          lineHeight: 1.3,
                         }}
                       >
                         {item.pillar_title}
                       </MDTypography>
+
+                      {/* Description */}
                       <MDTypography
                         sx={{
-                          fontSize: "0.75rem",
+                          fontSize: "0.875rem",
                           color: COLORS.textMuted,
-                          lineHeight: 1.4,
+                          lineHeight: 1.5,
+                          flex: 1,
                         }}
                       >
                         {item.description}
                       </MDTypography>
                     </Box>
-                  </Box>
-                </Grid>
-              );
-            })}
-          </Grid>
-        )}
+                  </Grid>
+                );
+              })}
+            </Grid>
+          )}
 
-        {/* Action Buttons */}
-        <Box
-          sx={{
-            mt: 8,
-            pt: 4,
-            borderTop: "1.5px solid #F8F9FA",
-            display: "flex",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
-          <MDButton
-            variant="outlined"
-            onClick={() => window.history.back()}
-            startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.75rem" }} />}
+          {/* Buttons */}
+          <Box
             sx={{
-              width: "140px",
-              py: 1.25,
+              mt: 8,
+              pt: 4,
+              borderTop: "1.5px solid #F1F5F9",
+              display: "flex",
+              justifyContent: "center",
+              gap: 2,
             }}
           >
-            ‹ Back
-          </MDButton>
-          <MDButton
-            variant="contained"
-            disabled={selectedIds.length !== 3}
-            onClick={handleDone}
-            sx={{
-              width: "140px",
-              py: 1.25,
-            }}
-          >
-            Done
-          </MDButton>
+            <MDButton
+              variant="outlined"
+              onClick={() => window.history.back()}
+              startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.8rem" }} />}
+              sx={{ width: "160px", py: 1.4 }}
+            >
+              Back
+            </MDButton>
+
+            <MDButton
+              variant="contained"
+              disabled={selectedIds.length !== 3}
+              onClick={handleDone}
+              sx={{ width: "160px", py: 1.4 }}
+            >
+              Done
+            </MDButton>
+          </Box>
         </Box>
-      </Box>
+      )}
     </DashboardLayout>
   );
 };
