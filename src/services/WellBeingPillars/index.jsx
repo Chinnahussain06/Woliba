@@ -8,12 +8,22 @@ import MDButton from "../../components/MDButton";
 // Redux
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchPillars } from "../../redux/thunks/lookupThunks";
+import { submitRegistration } from "../../redux/thunks/registrationThunks";
+
 import {
   selectPillars,
   selectPillarsLoading,
   selectSelectedPillarIds,
 } from "../../redux/selectors/pillarSelectors";
+
+import {
+  selectIsLoading,
+  selectRegistrationPayload,
+} from "../../redux/selectors/registrationSelectors";
+
 import { setSelectedPillarIds } from "../../redux/slices/pillarSlice";
+
+import Loader from "../../components/Loader";
 
 const COLORS = {
   primaryRed: "#D2686E",
@@ -29,6 +39,9 @@ const WellbeingPillars = () => {
   const pillars = useAppSelector(selectPillars) || [];
   const isLoading = useAppSelector(selectPillarsLoading);
   const selectedIds = useAppSelector(selectSelectedPillarIds);
+
+  const regLoading = useAppSelector(selectIsLoading);
+  const payload = useAppSelector(selectRegistrationPayload);
 
   useEffect(() => {
     dispatch(fetchPillars(1));
@@ -47,8 +60,14 @@ const WellbeingPillars = () => {
 
   const handleDone = () => {
     if (selectedIds.length !== 3) return;
-    console.log("Proceeding with:", selectedIds);
+    dispatch(submitRegistration(payload));
   };
+
+  if (regLoading) {
+    return (
+      <Loader text="Submitting registration..." sx={{ height: "100vh" }} />
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -96,7 +115,7 @@ const WellbeingPillars = () => {
                     sx={{
                       display: "flex",
                       flexDirection: "row",
-                      flex: 1, // Forces card to fill the Grid column height
+                      flex: 1, // Rule: Force card to fill Grid height
                       alignItems: "flex-start",
                       gap: 2,
                       p: 2.5,
@@ -114,7 +133,7 @@ const WellbeingPillars = () => {
                       },
                     }}
                   >
-                    {/* Ranked Box (1, 2, 3) */}
+                    {/* Rank Box (1, 2, 3) */}
                     <Box
                       sx={{
                         width: 22,
@@ -142,7 +161,7 @@ const WellbeingPillars = () => {
                       )}
                     </Box>
 
-                    {/* Text Area */}
+                    {/* Content */}
                     <Box sx={{ flex: 1 }}>
                       <MDTypography
                         sx={{
@@ -150,6 +169,7 @@ const WellbeingPillars = () => {
                           color: COLORS.textDark,
                           fontWeight: 700,
                           mb: 0.5,
+                          lineHeight: 1.2,
                         }}
                       >
                         {item.pillar_title}
@@ -191,10 +211,6 @@ const WellbeingPillars = () => {
               px: 6,
               textTransform: "none",
               fontWeight: 600,
-              "&:hover": {
-                borderColor: "#BF5A60",
-                bgcolor: "rgba(210, 104, 110, 0.04)",
-              },
             }}
           >
             ‹ Back
