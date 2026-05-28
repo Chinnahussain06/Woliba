@@ -21,7 +21,6 @@ export default defineConfig(() => {
       watch: process.env.DISABLE_HMR === "true" ? null : {},
       host: "0.0.0.0",
       port: 3000,
-
       proxy: {
         "/v1": {
           target: "https://dev.api.woliba.io",
