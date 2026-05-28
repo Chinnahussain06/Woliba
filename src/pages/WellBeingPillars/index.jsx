@@ -38,6 +38,7 @@ import {
 import PillarsSkeleton from "./components/PillarsSkeleton";
 
 
+
 const WellbeingPillars = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
