@@ -7,6 +7,7 @@ A multi-step user registration web application for the **Woliba** wellness platf
 ## Table of Contents
 
 - [Overview](#overview)
+- [Screenshots](#screenshots)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Registration Flow](#registration-flow)
@@ -38,6 +39,26 @@ Woliba is a corporate wellness platform. This frontend handles the complete **us
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
 ![DayJS](https://img.shields.io/badge/Day.js-FF5F4C?style=for-the-badge&logo=javascript&logoColor=white)
 ![Lato](https://img.shields.io/badge/Lato_Font-000000?style=for-the-badge&logo=google-fonts&logoColor=white)
+
+---
+
+## Screenshots
+
+| Step 1 — Company Verification | Step 2 — User Details |
+|---|---|
+| ![Company Verification](./docs/screenshots/01-company-verification.png) | ![User Details](./docs/screenshots/02-user-details.png) |
+
+| Step 3 — OTP Verification | Step 4 — Login Credentials |
+|---|---|
+| ![OTP Verification](./docs/screenshots/03-otp-verification.png) | ![Login Credentials](./docs/screenshots/04-login-credentials.png) |
+
+| Step 5 — Wellness Selector | Step 6 — Wellbeing Pillars |
+|---|---|
+| ![Wellness Selector](./docs/screenshots/05-wellness-selector.png) | ![Wellbeing Pillars](./docs/screenshots/06-wellbeing-pillars.png) |
+
+| Step 7 — Welcome |
+|---|
+| ![Welcome](./docs/screenshots/07-welcome.png) |
 
 ---
 
