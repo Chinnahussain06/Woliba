@@ -26,9 +26,9 @@ import MDDatePicker from "@/src/components/MDDatePicker";
 import MDButton from "@/src/components/MDButton";
 import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
-import DashboardLayout from "@/src/Layouts/DashboardLayout";
-import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
-import Footer from "@/src/Layouts/Footer";
+import DashboardLayout from "@/src/LayoutsTemp/DashboardLayout";
+import DashboardNavbar from "@/src/LayoutsTemp/DashboardNavbar";
+import Footer from "@/src/LayoutsTemp/Footer";
 
 import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
 
