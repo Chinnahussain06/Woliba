@@ -15,6 +15,7 @@ import { Box } from "@mui/material";
 
 // components
 import MDLoader from "@/src/components/MDLoader";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Redux
 import { store } from "./redux/store";
@@ -26,8 +27,8 @@ import wolibaTheme from "./assets/theme";
 import registrationRoutes from "./routes/registrationRoutes";
 
 // Guards
-import StepGuard from "./gurads/StepGuard";
-import RegistrationGuard from "./gurads/RegistrationGuard";
+import StepGuard from "./guards/StepGuard";
+import RegistrationGuard from "./guards/RegistrationGuard";
 
 const SuspenseLoader = () => (
   <Box
@@ -50,32 +51,37 @@ export default function App() {
 
         <Router>
           <Suspense fallback={<SuspenseLoader />}>
-            <Routes>
-              {registrationRoutes.map(
-                ({ path, element, selector, redirectTo, requiresGuard }) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={
-                      requiresGuard ? (
-                        <StepGuard selector={selector} redirectTo={redirectTo}>
-                          {element}
-                        </StepGuard>
-                      ) : (
-                        <RegistrationGuard>{element}</RegistrationGuard>
-                      )
-                    }
-                  />
-                ),
-              )}
+            <ErrorBoundary>
+              <Routes>
+                {registrationRoutes.map(
+                  ({ path, element, selector, redirectTo, requiresGuard }) => (
+                    <Route
+                      key={path}
+                      path={path}
+                      element={
+                        requiresGuard ? (
+                          <StepGuard
+                            selector={selector}
+                            redirectTo={redirectTo}
+                          >
+                            {element}
+                          </StepGuard>
+                        ) : (
+                          <RegistrationGuard>{element}</RegistrationGuard>
+                        )
+                      }
+                    />
+                  ),
+                )}
 
-              <Route
-                path="*"
-                element={
-                  <Navigate to="/register/company-verification" replace />
-                }
-              />
-            </Routes>
+                <Route
+                  path="*"
+                  element={
+                    <Navigate to="/register/company-verification" replace />
+                  }
+                />
+              </Routes>
+            </ErrorBoundary>
           </Suspense>
         </Router>
       </ThemeProvider>

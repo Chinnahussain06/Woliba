@@ -1,6 +1,23 @@
-# Woliba Frontend
+<div align="center">
+  <img src="./src/assets/images/wolibaLogo.png" width="200" />
 
-A multi-step user registration web application for the **Woliba** wellness platform. Built with React 19, Vite, Material UI, and Redux Toolkit, it guides new employees through a structured onboarding flow — from company verification to personalised wellness preferences.
+  <h1>Woliba Frontend</h1>
+
+  <p>A multi-step user registration web application for the <strong>Woliba</strong> wellness platform. Built with React 19, Vite, Material UI, and Redux Toolkit, it guides new employees through a structured onboarding flow — from company verification to personalised wellness preferences.</p>
+
+![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI_v9-007FFF?style=for-the-badge&logo=mui&logoColor=white)
+![Redux](https://img.shields.io/badge/Redux_Toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router_v7-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Formik](https://img.shields.io/badge/Formik-172B4D?style=for-the-badge&logo=formik&logoColor=white)
+![Yup](https://img.shields.io/badge/Yup-FF4154?style=for-the-badge&logo=javascript&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![DayJS](https://img.shields.io/badge/Day.js-FF5F4C?style=for-the-badge&logo=javascript&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Lato](https://img.shields.io/badge/Lato_Font-000000?style=for-the-badge&logo=google-fonts&logoColor=white)
+
+</div>
 
 ---
 
@@ -17,28 +34,15 @@ A multi-step user registration web application for the **Woliba** wellness platf
 - [State Management](#state-management)
 - [API Integration](#api-integration)
 - [Routing & Guards](#routing--guards)
+- [Error Handling](#error-handling)
 - [Component Library](#component-library)
+- [Testing](#testing)
 
 ---
 
 ## Overview
 
 Woliba is a corporate wellness platform. This frontend handles the complete **user registration journey**, broken into 7 sequential steps with guard-based navigation to ensure users cannot skip ahead in the flow. A 10-minute session timer begins after OTP verification to enforce timely completion of registration.
-
----
-
-## Tech Stack
-
-![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![MUI](https://img.shields.io/badge/MUI_v9-007FFF?style=for-the-badge&logo=mui&logoColor=white)
-![Redux](https://img.shields.io/badge/Redux_Toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=white)
-![React Router](https://img.shields.io/badge/React_Router_v7-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
-![Formik](https://img.shields.io/badge/Formik-172B4D?style=for-the-badge&logo=formik&logoColor=white)
-![Yup](https://img.shields.io/badge/Yup-FF4154?style=for-the-badge&logo=javascript&logoColor=white)
-![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
-![DayJS](https://img.shields.io/badge/Day.js-FF5F4C?style=for-the-badge&logo=javascript&logoColor=white)
-![Lato](https://img.shields.io/badge/Lato_Font-000000?style=for-the-badge&logo=google-fonts&logoColor=white)
 
 ---
 
@@ -62,6 +66,23 @@ Woliba is a corporate wellness platform. This frontend handles the complete **us
 
 ---
 
+## Tech Stack
+
+| Category | Technology |
+|---|---|
+| Framework | React 19 |
+| Build Tool | Vite 6 |
+| UI Library | Material UI (MUI) v9 |
+| State Management | Redux Toolkit + React-Redux |
+| Routing | React Router DOM v7 |
+| Forms & Validation | Formik + Yup |
+| HTTP Client | Axios |
+| Date Handling | Day.js + MUI X Date Pickers |
+| Testing | Vitest + React Testing Library |
+| Fonts | Lato (@fontsource/lato) |
+
+---
+
 ## Project Structure
 
 ```
@@ -77,6 +98,7 @@ src/
 │       └── index.js               # MUI theme composition
 │
 ├── components/                    # Reusable MD-prefixed UI components
+│   ├── ErrorBoundary/             # Catches and handles render errors
 │   ├── MDAlert/                   # Alert/notification component
 │   ├── MDButton/                  # Styled button
 │   ├── MDDatePicker/              # Date picker wrapper
@@ -86,14 +108,14 @@ src/
 │   ├── MDLoadingButton/           # Button with loading state
 │   └── MDTypography/              # Typography wrapper
 │
-├── gurads/                        # Route guards (note: intentional spelling)
+├── guards/                        # Route guards
 │   ├── RegistrationGuard.jsx      # Redirects completed registrations
 │   └── StepGuard.jsx              # Prevents skipping steps
 │
 ├── hooks/
 │   └── useRegistrationTimer.js    # Countdown timer hook (10-min window)
 │
-├── Layouts/
+├── layouts/
 │   ├── DashboardLayout/           # Outer layout shell
 │   ├── DashboardNavbar/           # Top navigation bar
 │   └── Footer/                   # Page footer
@@ -172,6 +194,19 @@ cd Woliba
 npm install
 ```
 
+### Environment Setup
+
+Copy the example env file and set your API URL:
+
+```bash
+cp .env.example .env
+```
+
+`.env.example`:
+```
+VITE_API_BASE_URL=https://dev.api.woliba.io/v1
+```
+
 ### Running Locally
 
 ```bash
@@ -192,7 +227,7 @@ Output is written to the `dist/` directory.
 
 ## Environment & Configuration
 
-The API base URL is determined by the Vite build mode:
+The API base URL is driven by the `VITE_API_BASE_URL` environment variable:
 
 | Mode | Base URL |
 |---|---|
@@ -214,7 +249,10 @@ DISABLE_HMR=true npm run dev
 | `npm run dev` | Start development server on port 3000 |
 | `npm run build` | Build for production |
 | `npm run clean` | Remove the `dist/` directory |
-| `npm run lint` | Lint check (currently a no-op placeholder) |
+| `npm run lint` | Run ESLint across `src/` |
+| `npm test` | Run unit tests with Vitest |
+| `npm run test:ui` | Run tests with Vitest UI dashboard |
+| `npm run test:coverage` | Run tests with coverage report |
 
 ---
 
@@ -270,10 +308,24 @@ All pages are **lazy-loaded** via `React.lazy` and `Suspense`, with a full-scree
 
 ---
 
+## Error Handling
+
+A global **`ErrorBoundary`** component wraps the entire route tree inside `Suspense`. If any lazy-loaded page throws an unexpected render error, the boundary catches it and displays a fallback UI with a link back to the start of the flow — preventing a full app crash.
+
+```
+App
+└── Suspense (fallback: MDLoader)
+    └── ErrorBoundary (fallback: error screen + redirect)
+        └── Routes (all 7 steps)
+```
+
+---
+
 ## Component Library
 
 Custom components are prefixed with `MD` (Material Design) and wrap MUI primitives with app-specific defaults:
 
+- **ErrorBoundary** — catches render errors and shows a graceful fallback screen
 - **MDButton** — themed button with variant and colour presets
 - **MDLoadingButton** — button that shows a spinner during async operations
 - **MDFormField** — text input wired to Formik's `useField`, with built-in error display
@@ -282,3 +334,44 @@ Custom components are prefixed with `MD` (Material Design) and wrap MUI primitiv
 - **MDAlert** — dismissable alert for API error messages
 - **MDLoader** — full-screen loader overlay using the branded `Loader.mp4` video
 - **MDTypography** — MUI `Typography` with default variant and colour props
+
+---
+
+## Testing
+
+Tests are written with **Vitest** and **React Testing Library**. Test files live alongside the code they test.
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run with live UI dashboard
+npm run test:ui
+
+# Run with coverage report
+npm run test:coverage
+```
+
+### Test Coverage
+
+| Area | What is tested |
+|---|---|
+| `registrationSlice` | Interest toggling, pillar limit (max 3), error clearing, state reset |
+| `registrationThunks` | `verifyCompany` success & failure, error message extraction |
+| `StepGuard` | Renders children when selector is truthy, redirects when falsy |
+| `useRegistrationTimer` | Expired deadline detection, countdown over time |
+
+### Test Structure
+
+```
+src/
+├── redux/
+│   ├── slices/registrationSlice.test.js
+│   └── thunks/registrationThunks.test.js
+├── guards/
+│   └── StepGuard.test.jsx
+└── hooks/
+    └── useRegistrationTimer.test.js
+```

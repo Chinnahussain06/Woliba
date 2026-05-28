@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "clean": "rimraf dist",
-    "lint": "echo 'No TypeScript linting needed'"
+    "lint": "eslint src/"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -28,10 +28,13 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "rimraf": "^6.0.1",
-    "vite": "^6.2.3"
+    "vite": "^6.2.3",
+    "vitest": "^4.1.7"
   }
 }

@@ -26,9 +26,9 @@ import {
 } from "@/src/redux/selectors/registrationSelectors";
 
 // Components
-import DashboardLayout from "@/src/Layouts/DashboardLayout";
-import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
-import Footer from "@/src/Layouts/Footer";
+import DashboardLayout from "@/src/layouts/DashboardLayout";
+import DashboardNavbar from "@/src/layouts/DashboardNavbar";
+import Footer from "@/src/layouts/Footer";
 
 //components
 import MDButton from "@/src/components/MDButton";

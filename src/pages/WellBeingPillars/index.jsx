@@ -7,9 +7,9 @@ import { Box, Divider, useTheme } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 // Components
-import DashboardLayout from "@/src/Layouts/DashboardLayout";
-import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
-import Footer from "@/src/Layouts/Footer";
+import DashboardLayout from "@/src/layouts/DashboardLayout";
+import DashboardNavbar from "@/src/layouts/DashboardNavbar";
+import Footer from "@/src/layouts/Footer";
 import MDLoader from "@/src/components/MDLoader";
 import MDTypography from "@/src/components/MDTypography";
 import MDButton from "@/src/components/MDButton";
