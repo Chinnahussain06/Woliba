@@ -1,5 +1,4 @@
 import { Box, Avatar } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 // Components
 import MDTypography from "@/src/components/MDTypography";
@@ -7,11 +6,12 @@ import MDButton from "@/src/components/MDButton";
 
 // Redux
 import { useAppSelector } from "@/src/redux/hooks";
-import { selectFirstName, selectLastName } from "@/src/redux/selectors/registrationSelectors";
+import {
+  selectFirstName,
+  selectLastName,
+} from "@/src/redux/selectors/registrationSelectors";
 
 const WelcomePage = () => {
-  const navigate = useNavigate();
-
   const firstName = useAppSelector(selectFirstName);
   const lastName = useAppSelector(selectLastName);
 
@@ -22,7 +22,7 @@ const WelcomePage = () => {
   };
 
   const handleGetStarted = () => {
-    navigate("/dashboard");
+    console.log("Get Started clicked");
   };
 
   return (
