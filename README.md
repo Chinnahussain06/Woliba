@@ -6,7 +6,7 @@ A multi-step user registration web application for the **Woliba** wellness platf
 
 ## Table of Contents
 
-- [Overview][def]
+- [Overview](#overview)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Registration Flow](#registration-flow)
@@ -28,17 +28,16 @@ Woliba is a corporate wellness platform. This frontend handles the complete **us
 
 ## Tech Stack
 
-| Category | Technology |
-|---|---|
-| Framework | React 19 |
-| Build Tool | Vite 6 |
-| UI Library | Material UI (MUI) v9 |
-| State Management | Redux Toolkit + React-Redux |
-| Routing | React Router DOM v7 |
-| Forms & Validation | Formik + Yup |
-| HTTP Client | Axios |
-| Date Handling | Day.js + MUI X Date Pickers |
-| Fonts | Lato (@fontsource/lato) |
+![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI_v9-007FFF?style=for-the-badge&logo=mui&logoColor=white)
+![Redux](https://img.shields.io/badge/Redux_Toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router_v7-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Formik](https://img.shields.io/badge/Formik-172B4D?style=for-the-badge&logo=formik&logoColor=white)
+![Yup](https://img.shields.io/badge/Yup-FF4154?style=for-the-badge&logo=javascript&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![DayJS](https://img.shields.io/badge/Day.js-FF5F4C?style=for-the-badge&logo=javascript&logoColor=white)
+![Lato](https://img.shields.io/badge/Lato_Font-000000?style=for-the-badge&logo=google-fonts&logoColor=white)
 
 ---
 
@@ -262,6 +261,3 @@ Custom components are prefixed with `MD` (Material Design) and wrap MUI primitiv
 - **MDAlert** — dismissable alert for API error messages
 - **MDLoader** — full-screen loader overlay using the branded `Loader.mp4` video
 - **MDTypography** — MUI `Typography` with default variant and colour props
-
-
-[def]: #overview
