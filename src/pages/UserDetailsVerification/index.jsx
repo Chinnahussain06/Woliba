@@ -122,7 +122,7 @@ function UserDetailsVerification() {
                   required
                 />
 
-                <Divider sx={{ my: 4 }} />
+                <Divider sx={{ my: 2 }} />
 
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <MDLoadingButton

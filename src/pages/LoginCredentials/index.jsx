@@ -22,7 +22,7 @@ import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import MDFormField from "@/src/components/MDFormField";
 import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDTypography from "@/src/components/MDTypography";
-import MDDateTimePicker from "@/src/components/MDDateTimePicker";
+import MDDatePicker from "@/src/components/MDDatePicker";
 import MDButton from "@/src/components/MDButton";
 import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
@@ -157,7 +157,7 @@ function LoginCredentials() {
                   }}
                 />
 
-                <MDDateTimePicker
+                <MDDatePicker
                   label={birthday.label}
                   placeholder={birthday.placeholder}
                   name={birthday.name}
@@ -173,7 +173,7 @@ function LoginCredentials() {
                   required
                 />
 
-                <MDDateTimePicker
+                <MDDatePicker
                   label={workAnniversary.label}
                   name={workAnniversary.name}
                   placeholder={workAnniversary.placeholder}

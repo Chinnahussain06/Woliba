@@ -13,7 +13,7 @@ export default function MDTypography({
       variant={variant}
       color={color}
       sx={{
-        fontFamily: "Inter, sans-serif",
+        fontFamily: "Lato, sans-serif",
         ...sx,
       }}
       {...rest}

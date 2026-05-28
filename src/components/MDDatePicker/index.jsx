@@ -5,8 +5,6 @@ import dayjs from "dayjs";
 import "dayjs/locale/en-gb";
 
 import Box from "@mui/material/Box";
-import InputAdornment from "@mui/material/InputAdornment";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import { useTheme } from "@mui/material/styles";
 import MDTypography from "../MDTypography";
 import { ErrorMessage } from "formik";
@@ -41,8 +39,8 @@ const MDDatePicker = ({
             display: "block",
             fontSize: "1rem",
             fontWeight: 400,
-            color: palette.text.primary,
-            mb: 0.75,
+            color: palette.secondary.main,
+            mb: 0.5,
           }}
         >
           {label}
@@ -59,11 +57,22 @@ const MDDatePicker = ({
           value={dateValue}
           onChange={handleChange}
           format="YYYY-MM-DD"
-          placeholder={placeholder || "Select date..."}
           slots={{ toolbar: () => null }}
           slotProps={{
             textField: {
               fullWidth: true,
+              placeholder: placeholder || "Select date...",
+              helperText: " ",
+              slotProps: {
+                formHelperText: {
+                  sx: {
+                    minHeight: "1.25rem",
+                    m: "2px 0 0",
+                    fontSize: "0.75rem",
+                    color: palette.text.secondary,
+                  },
+                },
+              },
               sx: {
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",
@@ -71,46 +80,42 @@ const MDDatePicker = ({
                   fontSize: "0.875rem",
                   color: palette.text.primary,
 
-                  "& fieldset": {
-                    borderColor: palette.divider,
-                  },
-                  "&:hover fieldset": {
-                    borderColor: palette.text.secondary,
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: palette.primary.dark,
-                  },
-                  "&.Mui-disabled": {
-                    backgroundColor: palette.background.default,
-                    color: palette.text.secondary,
-                  },
-                  "& .MuiSvgIcon-root": {
-                    color: `${palette.primary.main} !important`,
-                  },
-
-                  "& .MuiIconButton-root": {
-                    color: `${palette.primary.main} !important`,
+                  "& input": {
+                    padding: "16.5px 14px",
                   },
 
                   "& input::placeholder": {
                     color: palette.text.secondary,
                     opacity: 0.8,
                   },
+
+                  // target the actual fieldset border element
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: palette.divider,
+                    borderRadius: "8px",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: palette.text.secondary,
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: palette.primary.dark,
+                  },
+                  "&.Mui-disabled": {
+                    backgroundColor: palette.background.default,
+                  },
+                  "&.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                    borderColor: palette.divider,
+                  },
+                  "&.Mui-disabled input": {
+                    color: palette.text.secondary,
+                    WebkitTextFillColor: palette.text.secondary,
+                  },
+
+                  // hide the default calendar icon
+                  "& .MuiInputAdornment-root": {
+                    display: "none",
+                  },
                 },
-                "& input::placeholder": {
-                  color: palette.text.secondary,
-                  opacity: 0.8,
-                },
-              },
-              InputProps: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <CalendarMonthOutlinedIcon
-                      fontSize="small"
-                      sx={{ color: "#fff !important", mr: 1 }}
-                    />
-                  </InputAdornment>
-                ),
               },
             },
 

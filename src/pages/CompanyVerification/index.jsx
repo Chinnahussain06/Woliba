@@ -3,7 +3,13 @@ import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import { Box, InputAdornment, IconButton, Divider } from "@mui/material";
+import {
+  Box,
+  InputAdornment,
+  IconButton,
+  Divider,
+  useTheme,
+} from "@mui/material";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
 
@@ -29,6 +35,7 @@ import {
 import { form, initialValues, companyValidations } from "./schema";
 
 function CompanyVerification() {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -108,6 +115,7 @@ function CompanyVerification() {
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
+                          sx={{ color: theme.palette.primary.main }}
                         >
                           {showPassword ? (
                             <VisibilityOutlined />

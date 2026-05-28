@@ -74,7 +74,7 @@ export default function MDButton({
     <Button
       variant={variant}
       sx={{
-        fontFamily: "Inter, sans-serif",
+        fontFamily: "Lato, sans-serif",
         textTransform: "none",
         borderRadius: "8px",
         transition: "all 0.25s ease-in-out",
