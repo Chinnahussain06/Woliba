@@ -1,7 +1,9 @@
 {
   "name": "woliba-frontend",
+  "version": "1.0.0",
+  "description": "Multi-step user registration flow for the Woliba wellness platform",
+  "author": "Shaik chinna Husain Vali",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
