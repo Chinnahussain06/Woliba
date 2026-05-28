@@ -1,4 +1,5 @@
-import React, { lazy, Suspense } from "react";
+import React, { Suspense } from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,37 +8,38 @@ import {
 } from "react-router-dom";
 
 import { Provider } from "react-redux";
+
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { Box } from "@mui/material";
 
+// components
+import MDLoader from "@/src/components/MDLoader";
+
+// Redux
 import { store } from "./redux/store";
+
+// Theme
 import wolibaTheme from "./assets/theme";
-import { CircularProgress } from "@mui/material";
 
-// Lazy loaded pages
-const CompanyVerificationPage = lazy(
-  () => import("./pages/CompanyVerification"),
-);
-const UserDetailsVerificationPage = lazy(
-  () => import("./pages/UserDetailsVerification"),
-);
-const OtpVerificationPage = lazy(() => import("./pages/OtpVerification"));
-const LoginCredentialsPage = lazy(() => import("./pages/LoginCredentials"));
-const WellnessSelector = lazy(() => import("./pages/WellnessSelector"));
-const WellbeingPillars = lazy(() => import("./pages/WellBeingPillars"));
-const WelcomePage = lazy(() => import("./pages/welcome"));
+// Routes
+import registrationRoutes from "./routes/registrationRoutes";
 
-const PageLoader = () => (
-  <div
-    style={{
-      height: "100vh",
+// Guards
+import StepGuard from "./gurads/StepGuard";
+import RegistrationGuard from "./gurads/RegistrationGuard";
+
+const SuspenseLoader = () => (
+  <Box
+    sx={{
+      minHeight: "100vh",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
     }}
   >
-    <CircularProgress sx={{ color: wolibaTheme.palette.primary.main }} />
-  </div>
+    <MDLoader text="Initializing..." size="15em" />
+  </Box>
 );
 
 export default function App() {
@@ -45,40 +47,27 @@ export default function App() {
     <Provider store={store}>
       <ThemeProvider theme={wolibaTheme}>
         <CssBaseline />
+
         <Router>
-          <Suspense fallback={<PageLoader />}>
+          <Suspense fallback={<SuspenseLoader />}>
             <Routes>
-              <Route
-                path="/register/company-verification"
-                element={<CompanyVerificationPage />}
-              />
-
-              <Route
-                path="/register/user-details-verification"
-                element={<UserDetailsVerificationPage />}
-              />
-
-              <Route
-                path="/register/otp-verification"
-                element={<OtpVerificationPage />}
-              />
-
-              <Route
-                path="/register/login-credentials"
-                element={<LoginCredentialsPage />}
-              />
-
-              <Route
-                path="/register/wellness-selector"
-                element={<WellnessSelector />}
-              />
-
-              <Route
-                path="/register/wellbeing-pillars"
-                element={<WellbeingPillars />}
-              />
-
-              <Route path="/welcome" element={<WelcomePage />} />
+              {registrationRoutes.map(
+                ({ path, element, selector, redirectTo, requiresGuard }) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      requiresGuard ? (
+                        <StepGuard selector={selector} redirectTo={redirectTo}>
+                          {element}
+                        </StepGuard>
+                      ) : (
+                        <RegistrationGuard>{element}</RegistrationGuard>
+                      )
+                    }
+                  />
+                ),
+              )}
 
               <Route
                 path="*"

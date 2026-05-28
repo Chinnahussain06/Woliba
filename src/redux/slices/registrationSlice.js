@@ -9,6 +9,8 @@ import {
   fetchPillars,
 } from "../thunks/registrationThunks";
 
+const OTP_EXPIRY_TIME = 10 * 60 * 1000; // 10 minutes in milliseconds
+
 const initialState = {
   // company details
   companyId: null,
@@ -22,6 +24,9 @@ const initialState = {
   // OTP verification
   otpToken: null,
   otpVerified: false,
+
+  // registration timer (stores timestamp of when the 10-min window expires)
+  registrationDeadline: null,
 
   // profile details
   password: "",
@@ -43,7 +48,7 @@ const initialState = {
   registrationComplete: false,
 
   // Async State
-  status: "idle", // "idle" | "loading" | "success" | "failed"
+  status: "idle",
   resendStatus: "idle",
   error: null,
 };
@@ -55,7 +60,6 @@ const onPending = (state) => {
 
 const onRejected = (state, { payload }) => {
   state.status = "failed";
-
   if (typeof payload === "string") {
     state.error = payload;
   } else if (payload?.message) {
@@ -103,7 +107,7 @@ const registrationSlice = createSlice({
       state.acceptedPolicy = payload;
     },
 
-    // Intersests
+    // Interests
     toggleInterest: (state, { payload }) => {
       if (state.selectedInterests.includes(payload)) {
         state.selectedInterests = state.selectedInterests.filter(
@@ -114,7 +118,7 @@ const registrationSlice = createSlice({
       }
     },
 
-    // pillars
+    // Pillars
     togglePillar: (state, { payload }) => {
       if (state.selectedPillars.includes(payload)) {
         state.selectedPillars = state.selectedPillars.filter(
@@ -135,6 +139,16 @@ const registrationSlice = createSlice({
       interests: state.interests,
       pillars: state.pillars,
     }),
+  
+    // Registration Timer
+    setRegistrationDeadline: (state) => {
+      state.registrationDeadline = Date.now() + OTP_EXPIRY_TIME;
+    },
+
+    // clear deadline
+    clearRegistrationDeadline: (state) => {
+      state.registrationDeadline = null;
+    },
   },
 
   extraReducers: (builder) => {
@@ -167,6 +181,7 @@ const registrationSlice = createSlice({
       .addCase(verifyOtp.fulfilled, (state) => {
         state.status = "success";
         state.otpVerified = true;
+        state.registrationDeadline = Date.now() + 10 * 60 * 1000;
       })
 
       // resend OTP
@@ -181,6 +196,7 @@ const registrationSlice = createSlice({
       .addCase(resendOtp.fulfilled, (state, { payload }) => {
         state.resendStatus = "success";
         state.otpToken = payload?.data?.token ?? null;
+        state.registrationDeadline = null;
       })
 
       // fetch interests
@@ -206,13 +222,10 @@ const registrationSlice = createSlice({
         state.status = "success";
         state.authToken = payload?.data?.token ?? null;
         state.registrationComplete = true;
+        state.registrationDeadline = null;
       });
   },
 });
-
-// ─────────────────────────────────────────────
-// Exports
-// ─────────────────────────────────────────────
 
 export const {
   setCompanyName,
@@ -228,6 +241,8 @@ export const {
   togglePillar,
   clearError,
   resetRegistration,
+  setRegistrationDeadline,
+  clearRegistrationDeadline,
 } = registrationSlice.actions;
 
 export default registrationSlice.reducer;

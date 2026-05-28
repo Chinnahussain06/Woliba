@@ -21,7 +21,6 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
 import { fetchInterests } from "@/src/redux/thunks/registrationThunks";
 import { toggleInterest } from "@/src/redux/slices/registrationSlice";
-
 import {
   selectInterests,
   selectInterestsStatus,
@@ -33,15 +32,20 @@ import DashboardLayout from "@/src/Layouts/DashboardLayout";
 import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
 import Footer from "@/src/Layouts/Footer";
 
+//components
 import MDButton from "@/src/components/MDButton";
 import MDTypography from "@/src/components/MDTypography";
 import MDFormCard from "@/src/components/MDFormCard";
-import MDAlert from "@/src/components/MDAlert";
+
+//hooks
+import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
 
 const WellnessSelector = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const theme = useTheme();
+
+  useRegistrationTimer();
 
   const interests = useAppSelector(selectInterests);
   const status = useAppSelector(selectInterestsStatus);

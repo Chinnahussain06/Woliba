@@ -27,11 +27,13 @@ import {
   selectError,
 } from "@/src/redux/selectors/registrationSelectors";
 
+const OTP_LENGTH = 6;
+
 function OtpVerification() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [otp, setOtp] = useState(Array(6).fill(""));
+  const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
   const [timeLeft, setTimeLeft] = useState(180);
   const inputRefs = useRef([]);
 
@@ -95,7 +97,7 @@ function OtpVerification() {
     if (timeLeft > 0 || isResending || !email) return;
     const result = await dispatch(resendOtp({ email }));
     if (resendOtp.fulfilled.match(result)) {
-      setOtp(Array(6).fill(""));
+      setOtp(Array(OTP_LENGTH).fill(""));
       setTimeLeft(180);
     }
   };

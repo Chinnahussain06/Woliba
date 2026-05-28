@@ -30,6 +30,8 @@ import DashboardLayout from "@/src/Layouts/DashboardLayout";
 import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
 import Footer from "@/src/Layouts/Footer";
 
+import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
+
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
 import {
@@ -53,6 +55,8 @@ function LoginCredentials() {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  useRegistrationTimer();
 
   const apiError = useAppSelector(selectError);
 

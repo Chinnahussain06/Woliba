@@ -1,7 +1,7 @@
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { defineConfig } from 'vite';
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { fileURLToPath } from "url";
+import { defineConfig } from "vite";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,20 +11,20 @@ export default defineConfig(() => {
     plugins: [react()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        "@": path.resolve(__dirname, "."),
       },
     },
     server: {
-      hmr: process.env.DISABLE_HMR !== 'true',
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
-      host: '0.0.0.0',
+      hmr: process.env.DISABLE_HMR !== "true",
+      watch: process.env.DISABLE_HMR === "true" ? null : {},
+      host: "0.0.0.0",
       port: 3000,
       proxy: {
-        '/v1': {
-          target: 'https://dev.api.woliba.io/v1',
+        "/v1": {
+          target: "https://dev.api.woliba.io/v1",
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/v1/, ''),
+          rewrite: (path) => path.replace(/^\/v1/, ""),
         },
       },
     },

@@ -10,23 +10,23 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import DashboardLayout from "@/src/Layouts/DashboardLayout";
 import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
 import Footer from "@/src/Layouts/Footer";
-
+import MDSectionLoader from "@/src/components/MDSectionLoader";
 import MDLoader from "@/src/components/MDLoader";
 import MDTypography from "@/src/components/MDTypography";
 import MDButton from "@/src/components/MDButton";
 import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
 
+// Hooks
+import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
+
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
-
 import {
   fetchPillars,
   submitRegistration,
 } from "@/src/redux/thunks/registrationThunks";
-
-import { togglePillar } from "@/src/redux/slices/registrationSlice";
-
+import { togglePillar, clearError } from "@/src/redux/slices/registrationSlice";
 import {
   selectPillars,
   selectPillarsLoading,
@@ -35,10 +35,13 @@ import {
   selectError,
 } from "@/src/redux/selectors/registrationSelectors";
 
+
 const WellbeingPillars = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const theme = useTheme();
+
+  useRegistrationTimer();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -115,19 +118,7 @@ const WellbeingPillars = () => {
           <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
           {pillarsLoading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                py: 8,
-              }}
-            >
-              <CircularProgress
-                sx={{
-                  color: theme.palette.primary.main,
-                }}
-              />
-            </Box>
+            <MDSectionLoader height={250} />
           ) : (
             <Box
               sx={{

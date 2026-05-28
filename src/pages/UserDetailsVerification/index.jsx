@@ -91,7 +91,7 @@ function UserDetailsVerification() {
             onSubmit={handleSubmit}
             enableReinitialize
           >
-            {({ dirty }) => (
+            {({ isValid, isSubmitting }) => (
               <Form>
                 <MDFormField
                   label={emailId.label}
@@ -128,7 +128,7 @@ function UserDetailsVerification() {
                   <MDLoadingButton
                     type="submit"
                     loading={isLoading}
-                    disabled={!dirty}
+                    disabled={!isValid || isSubmitting}
                     sx={{
                       width: "100%",
                       maxWidth: 220,

@@ -13,6 +13,10 @@ export const selectLastName = (s) => r(s).lastName;
 export const selectOtpToken = (s) => r(s).otpToken;
 export const selectOtpVerified = (s) => r(s).otpVerified;
 
+//  Registration Timer
+export const selectRegistrationDeadline = (state) =>
+  state.registration.registrationDeadline;
+
 // Interests
 export const selectInterests = (s) => r(s).interests;
 export const selectAllInterests = (s) => r(s).interests;
