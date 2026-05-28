@@ -18,9 +18,9 @@ import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDFormField from "@/src/components/MDFormField";
 import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
-import DashboardLayout from "@/src/LayoutsTemp/DashboardLayout";
-import DashboardNavbar from "@/src/LayoutsTemp/DashboardNavbar";
-import Footer from "@/src/LayoutsTemp/Footer";
+import DashboardLayout from "@/src/Layouts/DashboardLayout";
+import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
+import Footer from "@/src/Layouts/Footer";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
