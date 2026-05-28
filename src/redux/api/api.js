@@ -1,12 +1,11 @@
 import axios from "axios";
 
-const isDevelopment =
-  typeof window !== "undefined" && window.location.hostname === "localhost";
-
-const WOLIBA_API_BASE_URL = "https://dev.api.woliba.io";
-
 const api = axios.create({
-  baseURL: isDevelopment ? "/v1" : WOLIBA_API_BASE_URL,
+  baseURL:
+    import.meta.env.MODE === "development"
+      ? "/v1"
+      : "https://dev.api.woliba.io/v1",
+
   headers: {
     "Content-Type": "application/json",
   },

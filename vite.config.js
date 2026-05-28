@@ -9,22 +9,24 @@ const __dirname = path.dirname(__filename);
 export default defineConfig(() => {
   return {
     plugins: [react()],
+
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "."),
       },
     },
+
     server: {
       hmr: process.env.DISABLE_HMR !== "true",
       watch: process.env.DISABLE_HMR === "true" ? null : {},
       host: "0.0.0.0",
       port: 3000,
+
       proxy: {
         "/v1": {
           target: "https://dev.api.woliba.io",
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/v1/, ""),
         },
       },
     },
