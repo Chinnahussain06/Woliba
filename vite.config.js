@@ -21,7 +21,7 @@ export default defineConfig(() => {
       port: 3000,
       proxy: {
         "/v1": {
-          target: "https://dev.api.woliba.io/v1",
+          target: "https://dev.api.woliba.io",
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/v1/, ""),
