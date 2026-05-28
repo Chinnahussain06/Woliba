@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
@@ -6,11 +6,9 @@ import {
   Box,
   Accordion,
   AccordionSummary,
-  AccordionDetails,
-  CircularProgress,
-  Chip,
+  AccordionDetails, Chip,
   Divider,
-  useTheme,
+  useTheme
 } from "@mui/material";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -39,6 +37,7 @@ import MDFormCard from "@/src/components/MDFormCard";
 
 //hooks
 import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
+import InterestsSkeleton from "./components/InterestsSkeleton";
 
 const WellnessSelector = () => {
   const navigate = useNavigate();
@@ -118,19 +117,7 @@ const WellnessSelector = () => {
           maxWidth="70%"
         >
           {isLoading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                py: 8,
-              }}
-            >
-              <CircularProgress
-                sx={{
-                  color: theme.palette.primary.main,
-                }}
-              />
-            </Box>
+            <InterestsSkeleton />
           ) : (
             Object.entries(groupedInterests).map(([category, items]) => {
               const isExpanded = expanded === category;

@@ -91,7 +91,7 @@ export const loginCredentialsValidationSchema = Yup.object().shape({
     .matches(/^[0-9]{10}$/, "Enter valid 10 digit mobile number")
     .required(contactNumber.errorMsg),
 
-  [workAnniversary.name]: Yup.number().nullable(),
+  [workAnniversary.name]: Yup.string().nullable(),
 
   [agreeToTerms.name]: Yup.boolean()
     .oneOf([true], "You must agree to Terms and Privacy Policy")

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import { Box, CircularProgress, Divider, useTheme } from "@mui/material";
+import { Box, Divider, useTheme } from "@mui/material";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
@@ -10,7 +10,6 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import DashboardLayout from "@/src/Layouts/DashboardLayout";
 import DashboardNavbar from "@/src/Layouts/DashboardNavbar";
 import Footer from "@/src/Layouts/Footer";
-import MDSectionLoader from "@/src/components/MDSectionLoader";
 import MDLoader from "@/src/components/MDLoader";
 import MDTypography from "@/src/components/MDTypography";
 import MDButton from "@/src/components/MDButton";
@@ -34,6 +33,9 @@ import {
   selectRegistrationPayload,
   selectError,
 } from "@/src/redux/selectors/registrationSelectors";
+
+// Components
+import PillarsSkeleton from "./components/PillarsSkeleton";
 
 
 const WellbeingPillars = () => {
@@ -118,7 +120,7 @@ const WellbeingPillars = () => {
           <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
           {pillarsLoading ? (
-            <MDSectionLoader height={250} />
+            <PillarsSkeleton />
           ) : (
             <Box
               sx={{
