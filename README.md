@@ -48,38 +48,39 @@ Woliba is a corporate wellness platform. This frontend handles the complete **us
 
 ## Screenshots
 
-| Step 1 — Company Verification | Step 2 — User Details |
-|---|---|
+| Step 1 — Company Verification                                           | Step 2 — User Details                                   |
+| ----------------------------------------------------------------------- | ------------------------------------------------------- |
 | ![Company Verification](./docs/screenshots/01-company-verification.png) | ![User Details](./docs/screenshots/02-user-details.png) |
 
-| Step 3 — OTP Verification | Step 4 — Login Credentials |
-|---|---|
+| Step 3 — OTP Verification                                       | Step 4 — Login Credentials                                        |
+| --------------------------------------------------------------- | ----------------------------------------------------------------- |
 | ![OTP Verification](./docs/screenshots/03-otp-verification.png) | ![Login Credentials](./docs/screenshots/04-login-credentials.png) |
 
-| Step 5 — Wellness Selector | Step 6 — Wellbeing Pillars |
-|---|---|
+| Step 5 — Wellness Selector                                        | Step 6 — Wellbeing Pillars                                        |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
 | ![Wellness Selector](./docs/screenshots/05-wellness-selector.png) | ![Wellbeing Pillars](./docs/screenshots/06-wellbeing-pillars.png) |
 
-| Step 7 — Welcome |
-|---|
+| Step 7 — Welcome                              |
+| --------------------------------------------- |
 | ![Welcome](./docs/screenshots/07-welcome.png) |
 
 ---
 
 ## Tech Stack
 
-| Category | Technology |
-|---|---|
-| Framework | React 19 |
-| Build Tool | Vite 6 |
-| UI Library | Material UI (MUI) v9 |
-| State Management | Redux Toolkit + React-Redux |
-| Routing | React Router DOM v7 |
-| Forms & Validation | Formik + Yup |
-| HTTP Client | Axios |
-| Date Handling | Day.js + MUI X Date Pickers |
-| Testing | Vitest + React Testing Library |
-| Fonts | Lato (@fontsource/lato) |
+| Category           | Technology                     |
+| ------------------ | ------------------------------ |
+| Framework          | React 19                       |
+| Build Tool         | Vite 6                         |
+| UI Library         | Material UI (MUI) v9           |
+| State Management   | Redux Toolkit + React-Redux    |
+| Routing            | React Router DOM v7            |
+| Forms & Validation | Formik + Yup                   |
+| HTTP Client        | Axios                          |
+| Date Handling      | Day.js + MUI X Date Pickers    |
+| Error Boundaries   | react-error-boundary           |
+| Testing            | Vitest + React Testing Library |
+| Fonts              | Lato (@fontsource/lato)        |
 
 ---
 
@@ -87,64 +88,76 @@ Woliba is a corporate wellness platform. This frontend handles the complete **us
 
 ```
 src/
-├── App.jsx                        # Root component — theme, store, router
-├── main.jsx                       # Entry point
+├── App.jsx                        # Root component — Suspense + route rendering
+├── AppErrorBoundary.jsx           # Top-level error boundary (react-error-boundary)
+├── main.jsx                       # Entry point — Redux, MUI theme, Router providers
 │
 ├── assets/
-│   ├── images/                    # Logo, background, loader video
+│   ├── images/                    # Logo, background, loader video (Loader.mp4)
 │   └── theme/
 │       ├── base/palette.js        # Brand colour tokens
 │       ├── base/typography.js     # Font configuration
 │       └── index.js               # MUI theme composition
 │
 ├── components/                    # Reusable MD-prefixed UI components
-│   ├── ErrorBoundary/             # Catches and handles render errors
 │   ├── MDAlert/                   # Alert/notification component
-│   ├── MDButton/                  # Styled button
-│   ├── MDDatePicker/              # Date picker wrapper
-│   ├── MDFormCard/                # Card wrapper for form pages
-│   ├── MDFormField/               # Text input with Formik integration
-│   ├── MDLoader/                  # Animated loader (uses Loader.mp4)
-│   ├── MDLoadingButton/           # Button with loading state
-│   └── MDTypography/              # Typography wrapper
-│
-├── guards/                        # Route guards
-│   ├── RegistrationGuard.jsx      # Redirects completed registrations
-│   └── StepGuard.jsx              # Prevents skipping steps
+│   ├── MDButton/                  # Styled button (contained, outlined, text variants)
+│   ├── MDDatePicker/              # MUI X DatePicker with Day.js adapter & Formik support
+│   ├── MDFormCard/                # Glassmorphism card wrapper for every registration step
+│   ├── MDFormField/               # MUI TextField wired to Formik's Field + error display
+│   ├── MDLoader/                  # Full-screen animated loader using Loader.mp4
+│   ├── MDLoadingButton/           # MDButton with CircularProgress loading state
+│   └── MDTypography/              # MUI Typography with default variant/colour props
 │
 ├── hooks/
-│   └── useRegistrationTimer.js    # Countdown timer hook (10-min window)
+│   └── useRegistrationTimer.js    # Countdown timer hook — detects 10-min deadline expiry
 │
 ├── layouts/
-│   ├── DashboardLayout/           # Outer layout shell
-│   ├── DashboardNavbar/           # Top navigation bar
+│   ├── DashboardLayout/           # Outer layout shell (full-screen background)
+│   ├── DashboardNavbar/           # Top navigation bar with Woliba logo
 │   └── Footer/                   # Page footer
 │
 ├── pages/
 │   ├── CompanyVerification/       # Step 1 — verify company name & password
-│   ├── UserDetailsVerification/   # Step 2 — collect name & email, send OTP
-│   ├── OtpVerification/           # Step 3 — verify OTP (with resend + timer)
-│   ├── LoginCredentials/          # Step 4 — set password & profile details
-│   ├── WellnessSelector/          # Step 5 — choose wellness interests
-│   ├── WellBeingPillars/          # Step 6 — select up to 3 wellbeing pillars
-│   └── welcome/                   # Step 7 — success/welcome screen
+│   │   ├── index.jsx
+│   │   └── schema.js              # Yup validation schema
+│   ├── UserDetailsVerification/   # Step 2 — collect first name, last name & email; send OTP
+│   │   ├── index.jsx
+│   │   └── schema.js
+│   ├── OtpVerification/           # Step 3 — 6-digit OTP entry with resend + countdown timer
+│   │   └── index.jsx
+│   ├── LoginCredentials/          # Step 4 — set password, DOB, phone, work anniversary, policy
+│   │   ├── index.jsx
+│   │   └── schema.js
+│   ├── WellnessSelector/          # Step 5 — choose wellness interests (fetched from API)
+│   │   ├── index.jsx
+│   │   └── components/
+│   │       └── InterestsSkeleton.jsx
+│   ├── WellBeingPillars/          # Step 6 — select up to 3 wellbeing pillars (fetched from API)
+│   │   ├── index.jsx
+│   │   └── components/
+│   │       └── PillarsSkeleton.jsx
+│   └── welcome/                   # Step 7 — registration complete / welcome screen
+│       └── index.jsx
 │
 ├── redux/
-│   ├── api/api.js                 # Axios instance with base URL + proxy
+│   ├── api/api.js                 # Axios instance — base URL driven by VITE_API_BASE_URL
 │   ├── hooks.js                   # Typed useAppDispatch / useAppSelector
-│   ├── store.js                   # Redux store configuration
+│   ├── store.js                   # Redux store with registration reducer
 │   ├── selectors/
-│   │   └── registrationSelectors.js  # Memoised state selectors
+│   │   └── registrationSelectors.js  # All state selectors (plain functions, not memoised)
 │   ├── slices/
-│   │   └── registrationSlice.js   # Registration state + reducers
+│   │   ├── registrationSlice.js   # Full registration state, reducers & extraReducers
+│   │   └── registrationSlice.test.js
 │   └── thunks/
-│       └── registrationThunks.js  # Async API thunks
+│       └── registrationThunks.js  # All async API thunks with centralised error extraction
 │
 ├── routes/
-│   └── registrationRoutes.jsx     # Route definitions with guard config
+│   ├── registrationRoutes.jsx     # Route definitions — lazy-loaded pages with guard config
+│   └── RouteGuard.jsx             # Unified guard — redirects when a Redux selector is falsy
 │
 ├── styles/
-│   └── index.css                  # Global styles
+│   └── index.css                  # Global styles & CSS resets
 │
 └── utils/
     └── validator.js               # Shared validation helpers
@@ -157,19 +170,19 @@ src/
 The onboarding is a strictly ordered, 7-step flow. Each step is guarded — users who attempt to navigate directly to a later step are redirected to the appropriate earlier step.
 
 ```
-/register/company-verification          (Step 1 — entry point)
+/register/company-verification          (Step 1 — entry point, no guard)
         ↓  Company ID confirmed
-/register/user-details-verification    (Step 2)
+/register/user-details-verification    (Step 2 — requires: companyId)
         ↓  OTP dispatched to email
-/register/otp-verification             (Step 3 — 10-min timer starts on success)
-        ↓  OTP verified
-/register/login-credentials            (Step 4)
+/register/otp-verification             (Step 3 — requires: companyId)
+        ↓  OTP verified; 10-min timer starts
+/register/login-credentials            (Step 4 — requires: otpVerified)
         ↓
-/register/wellness-selector            (Step 5)
+/register/wellness-selector            (Step 5 — requires: otpVerified)
         ↓
-/register/wellbeing-pillars            (Step 6 — max 3 pillars selectable)
+/register/wellbeing-pillars            (Step 6 — requires: otpVerified; max 3 pillars)
         ↓  Registration submitted
-/welcome                               (Step 7 — completion screen)
+/welcome                               (Step 7 — requires: registrationComplete)
 ```
 
 Any unknown route redirects to `/register/company-verification`.
@@ -196,14 +209,9 @@ npm install
 
 ### Environment Setup
 
-Copy the example env file and set your API URL:
+Create a `.env` file in the project root and set your API URL:
 
 ```bash
-cp .env.example .env
-```
-
-`.env.example`:
-```
 VITE_API_BASE_URL=https://dev.api.woliba.io/v1
 ```
 
@@ -229,10 +237,10 @@ Output is written to the `dist/` directory.
 
 The API base URL is driven by the `VITE_API_BASE_URL` environment variable:
 
-| Mode | Base URL |
-|---|---|
+| Mode          | Base URL                                                           |
+| ------------- | ------------------------------------------------------------------ |
 | `development` | `/v1` (proxied via Vite dev server to `https://dev.api.woliba.io`) |
-| `production` | `https://dev.api.woliba.io/v1` |
+| `production`  | Value of `VITE_API_BASE_URL`                                       |
 
 To disable Hot Module Replacement (e.g. in Docker or CI):
 
@@ -244,15 +252,20 @@ DISABLE_HMR=true npm run dev
 
 ## Available Scripts
 
-| Script | Description |
-|---|---|
-| `npm run dev` | Start development server on port 3000 |
-| `npm run build` | Build for production |
-| `npm run clean` | Remove the `dist/` directory |
-| `npm run lint` | Run ESLint across `src/` |
-| `npm test` | Run unit tests with Vitest |
-| `npm run test:ui` | Run tests with Vitest UI dashboard |
-| `npm run test:coverage` | Run tests with coverage report |
+| Script          | Description                           |
+| --------------- | ------------------------------------- |
+| `npm run dev`   | Start development server on port 3000 |
+| `npm run build` | Build for production                  |
+| `npm run clean` | Remove the `dist/` directory          |
+| `npm run lint`  | Run ESLint across `src/`              |
+| `npm test`      | Run unit tests with Vitest            |
+
+> **Note:** `test:ui` and `test:coverage` scripts are not currently defined in `package.json`. Add them if needed:
+>
+> ```json
+> "test:ui": "vitest --ui",
+> "test:coverage": "vitest run --coverage"
+> ```
 
 ---
 
@@ -263,60 +276,75 @@ All registration state lives in a single Redux slice (`registrationSlice`). The 
 - **Company**: `companyId`, `companyName`
 - **User details**: `email`, `firstName`, `lastName`
 - **OTP**: `otpToken`, `otpVerified`
-- **Session timer**: `registrationDeadline` (Unix timestamp, 10 minutes from OTP verification)
+- **Session timer**: `registrationDeadline` (Unix timestamp, 10 minutes from OTP verification; reset to `null` on OTP resend or registration complete)
 - **Profile**: `password`, `dob`, `phone`, `workAnniversary`, `acceptedPolicy`
-- **Wellness interests**: `interests` (all), `selectedInterests` (user picks)
+- **Wellness interests**: `interests` (all), `selectedInterests` (user picks — unlimited)
 - **Wellbeing pillars**: `pillars` (all), `selectedPillars` (user picks, max 3)
 - **Completion**: `authToken`, `registrationComplete`
-- **Async state**: `status`, `resendStatus`, `error`
+- **Async state**: `status`, `resendStatus`, `error`, `resendError`
+
+### Key Reducers
+
+| Reducer                       | Behaviour                                                                |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `toggleInterest(id)`          | Adds or removes an interest from `selectedInterests`                     |
+| `togglePillar(id)`            | Adds or removes a pillar; ignores additions when 3 are already selected  |
+| `clearError()`                | Clears both `error` and `resendError`                                    |
+| `resetRegistration()`         | Resets all state to initial values, preserving `interests` and `pillars` |
+| `setRegistrationDeadline()`   | Sets deadline to `Date.now() + 10 minutes`                               |
+| `clearRegistrationDeadline()` | Sets `registrationDeadline` to `null`                                    |
 
 ### Key Selectors
 
-| Selector | Used by guard at |
-|---|---|
-| `selectCompanyId` | Steps 2 & 3 |
-| `selectOtpVerified` | Steps 4, 5 & 6 |
-| `selectRegistrationComplete` | Welcome page |
+| Selector                     | Used as guard condition at |
+| ---------------------------- | -------------------------- |
+| `selectCompanyId`            | Steps 2 & 3                |
+| `selectOtpVerified`          | Steps 4, 5 & 6             |
+| `selectRegistrationComplete` | Step 7 (welcome)           |
+
+The full selector list in `registrationSelectors.js` also exposes: `selectEmail`, `selectFirstName`, `selectLastName`, `selectOtpToken`, `selectRegistrationDeadline`, `selectPassword`, `selectDob`, `selectPhoneNumber`, `selectWorkAnniversary`, `selectAcceptedPrivacyPolicy`, `selectInterests`, `selectSelectedInterests`, `selectPillars`, `selectSelectedPillars`, `selectAuthToken`, `selectStatus`, `selectResendStatus`, `selectIsLoading`, `selectIsResendLoading`, `selectError`, `selectResendError`, and the composite `selectRegistrationPayload` (builds the full `/user-registration` POST body from state).
 
 ---
 
 ## API Integration
 
-All HTTP calls go through a shared Axios instance (`src/redux/api/api.js`). Async operations are implemented as Redux Thunks:
+All HTTP calls go through a shared Axios instance (`src/redux/api/api.js`). Async operations are implemented as Redux Thunks in `registrationThunks.js`, all using a shared `getErrorMessage` helper that extracts the most specific error message from the Axios error response.
 
-| Thunk | Method | Endpoint |
-|---|---|---|
-| `verifyCompany` | POST | `/verify-by-company-name-and-password` |
-| `saveUserDetails` | POST | `/save-user-details-and-send-otp` |
-| `verifyOtp` | POST | `/verify-otp-for-user-registration` |
-| `resendOtp` | POST | `/send-otp-for-user-registration` |
-| `fetchInterests` | GET | `/viewWellnessInterest` |
-| `fetchPillars` | GET | `/get-wellbeing-pillars/:languageId` |
-| `submitRegistration` | POST | `/user-registration` |
+| Thunk                | Method | Endpoint                                                          |
+| -------------------- | ------ | ----------------------------------------------------------------- |
+| `verifyCompany`      | POST   | `/verify-by-company-name-and-password`                            |
+| `saveUserDetails`    | POST   | `/save-user-details-and-send-otp`                                 |
+| `verifyOtp`          | POST   | `/verify-otp-for-user-registration`                               |
+| `resendOtp`          | POST   | `/send-otp-for-user-registration`                                 |
+| `fetchInterests`     | GET    | `/viewWellnessInterest`                                           |
+| `fetchPillars`       | GET    | `/get-wellbeing-pillars/:languageId` (defaults to `languageId=1`) |
+| `submitRegistration` | POST   | `/user-registration`                                              |
 
 ---
 
 ## Routing & Guards
 
-Two guards protect the route tree:
+Route protection is handled by a single **`RouteGuard`** component (`src/routes/RouteGuard.jsx`). Each route in `registrationRoutes.jsx` can declare an optional `condition` (a Redux selector) and a `redirectTo` path. `RouteGuard` calls `useAppSelector(condition)` and redirects if the result is falsy. Routes without a `condition` (currently only Step 1) are always accessible.
 
-**`RegistrationGuard`** — wraps the first step. Redirects users who have already completed registration away from re-entering the flow.
+All pages are **lazy-loaded** via `React.lazy` and `Suspense`, with a full-screen `MDLoader` as the fallback while the chunk is loading.
 
-**`StepGuard`** — wraps all subsequent steps. Each guarded route declares a `selector` (a Redux selector) and a `redirectTo` path. If the selector returns a falsy value, the user is redirected to the specified earlier step. This ensures linear progression through the flow.
-
-All pages are **lazy-loaded** via `React.lazy` and `Suspense`, with a full-screen animated loader as the fallback.
+> **Note:** The previous `guards/` directory (with `RegistrationGuard` and `StepGuard`) has been consolidated into `src/routes/RouteGuard.jsx`. The README section referring to those files is now updated accordingly.
 
 ---
 
 ## Error Handling
 
-A global **`ErrorBoundary`** component wraps the entire route tree inside `Suspense`. If any lazy-loaded page throws an unexpected render error, the boundary catches it and displays a fallback UI with a link back to the start of the flow — preventing a full app crash.
+A global **`AppErrorBoundary`** component (`src/AppErrorBoundary.jsx`) wraps the entire application in `main.jsx`, using `react-error-boundary`. If any component in the tree throws an unexpected render error, the boundary catches it and displays a fallback UI with two options — **Try Again** (calls `resetErrorBoundary`, which redirects to `/`) and **Go Home** (hard navigates to `/`).
 
 ```
-App
-└── Suspense (fallback: MDLoader)
-    └── ErrorBoundary (fallback: error screen + redirect)
-        └── Routes (all 7 steps)
+main.jsx
+└── Provider (Redux)
+    └── ThemeProvider (MUI)
+        └── BrowserRouter
+            └── AppErrorBoundary        ← catches any render error
+                └── App
+                    └── Suspense (fallback: MDLoader)
+                        └── Routes (all 7 steps, each wrapped in RouteGuard)
 ```
 
 ---
@@ -325,15 +353,14 @@ App
 
 Custom components are prefixed with `MD` (Material Design) and wrap MUI primitives with app-specific defaults:
 
-- **ErrorBoundary** — catches render errors and shows a graceful fallback screen
-- **MDButton** — themed button with variant and colour presets
-- **MDLoadingButton** — button that shows a spinner during async operations
-- **MDFormField** — text input wired to Formik's `useField`, with built-in error display
-- **MDDatePicker** — MUI X date picker with Day.js adapter and Formik integration
-- **MDFormCard** — centred card layout used as the container for every registration step
+- **MDButton** — themed button supporting `contained`, `outlined`, and `text` variants, with hover/active micro-interactions and disabled styling
+- **MDLoadingButton** — wraps `MDButton`; shows a `CircularProgress` spinner and custom `loadingText` during async operations
+- **MDFormField** — MUI `TextField` wired to Formik's `<Field>`, with custom label rendering (including required asterisk), error state, and consistent border/focus styling
+- **MDDatePicker** — MUI X `DatePicker` with Day.js (`en-gb` locale), Formik `ErrorMessage` integration, hidden calendar icon, and fully styled popover (rounded corners, custom action bar)
+- **MDFormCard** — glassmorphism `Paper` card (blur + translucent background) used as the container for every registration step; accepts `title`, `subtitle`, and `maxWidth`
 - **MDAlert** — dismissable alert for API error messages
 - **MDLoader** — full-screen loader overlay using the branded `Loader.mp4` video
-- **MDTypography** — MUI `Typography` with default variant and colour props
+- **MDTypography** — MUI `Typography` with default `variant` and `colour` props
 
 ---
 
@@ -346,32 +373,21 @@ Tests are written with **Vitest** and **React Testing Library**. Test files live
 ```bash
 # Run all tests
 npm test
-
-# Run with live UI dashboard
-npm run test:ui
-
-# Run with coverage report
-npm run test:coverage
 ```
 
-### Test Coverage
+### Current Test Coverage
 
-| Area | What is tested |
-|---|---|
-| `registrationSlice` | Interest toggling, pillar limit (max 3), error clearing, state reset |
-| `registrationThunks` | `verifyCompany` success & failure, error message extraction |
-| `StepGuard` | Renders children when selector is truthy, redirects when falsy |
-| `useRegistrationTimer` | Expired deadline detection, countdown over time |
+| File                                         | What is tested                                                    |
+| -------------------------------------------- | ----------------------------------------------------------------- |
+| `src/redux/slices/registrationSlice.test.js` | Pillar limit enforcement (max 3), error clearing via `clearError` |
 
-### Test Structure
+> **Note:** The README previously listed test files for `registrationThunks`, `StepGuard`, and `useRegistrationTimer`. Only `registrationSlice.test.js` currently exists in the repository. Add test files as coverage expands.
+
+### Suggested Test Structure
 
 ```
 src/
 ├── redux/
-│   ├── slices/registrationSlice.test.js
-│   └── thunks/registrationThunks.test.js
-├── guards/
-│   └── StepGuard.test.jsx
-└── hooks/
-    └── useRegistrationTimer.test.js
+│   ├── slices/registrationSlice.test.js      ✅ exists
+
 ```
