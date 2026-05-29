@@ -5,9 +5,17 @@ export const selectCompanyName = (s) => r(s).companyName;
 export const selectEmail = (s) => r(s).email;
 export const selectFirstName = (s) => r(s).firstName;
 export const selectLastName = (s) => r(s).lastName;
+
 export const selectOtpToken = (s) => r(s).otpToken;
 export const selectOtpVerified = (s) => r(s).otpVerified;
+
 export const selectRegistrationDeadline = (s) => r(s).registrationDeadline;
+
+export const selectPassword = (s) => r(s).password;
+export const selectDob = (s) => r(s).dob;
+export const selectPhoneNumber = (s) => r(s).phone;
+export const selectWorkAnniversary = (s) => r(s).workAnniversary;
+export const selectAcceptedPrivacyPolicy = (s) => r(s).acceptedPolicy;
 
 export const selectInterests = (s) => r(s).interests;
 export const selectSelectedInterests = (s) => r(s).selectedInterests;
@@ -22,8 +30,10 @@ export const selectRegistrationComplete = (s) => r(s).registrationComplete;
 
 export const selectStatus = (s) => r(s).status;
 export const selectResendStatus = (s) => r(s).resendStatus;
+
 export const selectIsLoading = (s) => r(s).status === "loading";
 export const selectError = (s) => r(s).error;
+
 export const selectResendError = (s) => r(s).resendError;
 export const selectIsResendLoading = (s) => r(s).resendStatus === "loading";
 

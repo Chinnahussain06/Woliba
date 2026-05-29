@@ -42,14 +42,17 @@ import {
   setWorkAnniversary,
   setAcceptedPolicy,
 } from "@/src/redux/slices/registrationSlice";
-import { selectError } from "@/src/redux/selectors/registrationSelectors";
+import {
+  selectError,
+  selectPassword,
+  selectDob,
+  selectPhoneNumber,
+  selectWorkAnniversary,
+  selectAcceptedPrivacyPolicy,
+} from "@/src/redux/selectors/registrationSelectors";
 
 // Schema
-import {
-  form,
-  InitialValues,
-  loginCredentialsValidationSchema,
-} from "./schema";
+import { form, InitialValues, ValidationSchema } from "./schema";
 
 function LoginCredentials() {
   const theme = useTheme();
@@ -59,6 +62,12 @@ function LoginCredentials() {
   useRegistrationTimer();
 
   const apiError = useAppSelector(selectError);
+
+  const passwordValue = useAppSelector(selectPassword);
+  const dobValue = useAppSelector(selectDob);
+  const phoneValue = useAppSelector(selectPhoneNumber);
+  const workAnniversaryValue = useAppSelector(selectWorkAnniversary);
+  const acceptedPolicyValue = useAppSelector(selectAcceptedPrivacyPolicy);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -74,7 +83,17 @@ function LoginCredentials() {
     },
   } = form;
 
-  const handleLoginCredentialsSubmit = (values) => {
+  const formInitialValues = {
+    ...InitialValues,
+    password: passwordValue || "",
+    confirmPassword: passwordValue || "",
+    birthday: dobValue || null,
+    contactNumber: phoneValue || "",
+    workAnniversary: workAnniversaryValue || null,
+    agreeToTerms: acceptedPolicyValue || false,
+  };
+
+  const handleSubmit = (values) => {
     dispatch(setPassword(values[password.name]));
     dispatch(setDob(values[birthday.name]));
     dispatch(setPhone(values[contactNumber.name]));
@@ -84,6 +103,10 @@ function LoginCredentials() {
     navigate("/register/wellness-selector");
   };
 
+  const handleBack = () => {
+    navigate("/register/personal-info");
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -91,8 +114,6 @@ function LoginCredentials() {
       <Box
         component="main"
         sx={{
-          position: "relative",
-          zIndex: 10,
           flex: 1,
           display: "flex",
           alignItems: "center",
@@ -105,9 +126,10 @@ function LoginCredentials() {
           <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
           <Formik
-            initialValues={InitialValues}
-            validationSchema={loginCredentialsValidationSchema}
-            onSubmit={handleLoginCredentialsSubmit}
+            initialValues={formInitialValues}
+            validationSchema={ValidationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
           >
             {({ values, setFieldValue, isValid, isSubmitting }) => (
               <Form>
@@ -120,10 +142,7 @@ function LoginCredentials() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          sx={{ color: theme.palette.primary.main }}
-                        >
+                        <IconButton onClick={() => setShowPassword((p) => !p)}>
                           {showPassword ? (
                             <VisibilityOffOutlined />
                           ) : (
@@ -136,19 +155,16 @@ function LoginCredentials() {
                 />
 
                 <MDFormField
-                  label="Confirm Password"
+                  label={confirmPassword.label}
                   name={confirmPassword.name}
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm password"
+                  placeholder={confirmPassword.placeholder}
                   required
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                          sx={{ color: theme.palette.primary.main }}
+                          onClick={() => setShowConfirmPassword((p) => !p)}
                         >
                           {showConfirmPassword ? (
                             <VisibilityOffOutlined />
@@ -195,6 +211,11 @@ function LoginCredentials() {
                         onChange={(e) =>
                           setFieldValue(agreeToTerms.name, e.target.checked)
                         }
+                        sx={{
+                          "& .MuiSvgIcon-root": {
+                            borderRadius: "50%",
+                          },
+                        }}
                       />
                     }
                     label={
@@ -240,7 +261,7 @@ function LoginCredentials() {
                 <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
                   <MDButton
                     variant="outlined"
-                    onClick={() => navigate("/register/otp-verification")}
+                    onClick={handleBack}
                     startIcon={<ArrowBackIosNew />}
                   >
                     Back

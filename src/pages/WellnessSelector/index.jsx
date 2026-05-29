@@ -6,9 +6,10 @@ import {
   Box,
   Accordion,
   AccordionSummary,
-  AccordionDetails, Chip,
+  AccordionDetails,
+  Chip,
   Divider,
-  useTheme
+  useTheme,
 } from "@mui/material";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -30,19 +31,17 @@ import DashboardLayout from "@/src/layouts/DashboardLayout";
 import DashboardNavbar from "@/src/layouts/DashboardNavbar";
 import Footer from "@/src/layouts/Footer";
 
-//components
 import MDButton from "@/src/components/MDButton";
 import MDTypography from "@/src/components/MDTypography";
 import MDFormCard from "@/src/components/MDFormCard";
 
-//hooks
+// Hooks
 import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
 import InterestsSkeleton from "./components/InterestsSkeleton";
 
 const WellnessSelector = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const theme = useTheme();
 
   useRegistrationTimer();
 
@@ -50,38 +49,31 @@ const WellnessSelector = () => {
   const status = useAppSelector(selectInterestsStatus);
   const selectedIds = useAppSelector(selectSelectedInterests);
 
-  const [expanded, setExpanded] = useState(null);
-
   const isLoading = status === "loading";
+
+  const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
     dispatch(fetchInterests());
   }, [dispatch]);
 
   useEffect(() => {
-    if (interests.length > 0 && expanded === null) {
-      const firstCategory =
-        interests[0]?.interest_type === "Other"
-          ? "Other Sports"
-          : interests[0]?.interest_type;
-
-      setExpanded(firstCategory);
-    }
+    if (!interests.length || expanded !== null) return;
+    
+    const first = interests[0]?.interest_type;
+    setExpanded(first === "Other" ? "Other Sports" : first);
   }, [interests, expanded]);
 
   const groupedInterests = useMemo(() => {
-    const map = {};
-
-    interests.forEach((item) => {
-      const type =
+    return interests.reduce((acc, item) => {
+      const key =
         item.interest_type === "Other" ? "Other Sports" : item.interest_type;
 
-      if (!map[type]) map[type] = [];
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
 
-      map[type].push(item);
-    });
-
-    return map;
+      return acc;
+    }, {});
   }, [interests]);
 
   const handleAccordionChange = (category) => (_, isExpanded) => {
@@ -101,8 +93,6 @@ const WellnessSelector = () => {
       <Box
         component="main"
         sx={{
-          position: "relative",
-          zIndex: 10,
           flex: 1,
           display: "flex",
           alignItems: "center",
@@ -112,9 +102,8 @@ const WellnessSelector = () => {
         }}
       >
         <MDFormCard
-          title="Select all wellness interests that apply — at least one is
-              required."
-          maxWidth="70%"
+          title="Select wellness interests (at least one required)"
+          maxWidth={{xs: "100%", sm: "100%", md: "70%"}}
         >
           {isLoading ? (
             <InterestsSkeleton />
@@ -132,36 +121,26 @@ const WellnessSelector = () => {
                   sx={{
                     mb: 1,
                     bgcolor: "transparent",
-                    "&:before": {
-                      display: "none",
-                    },
+                    "&:before": { display: "none" },
                   }}
                 >
                   <AccordionSummary
                     expandIcon={
                       isExpanded ? (
-                        <ArrowDropUpIcon
-                          sx={{
-                            color: theme.palette.primary.main,
-                          }}
-                        />
+                        <ArrowDropUpIcon sx={{ color: "primary.main" }} />
                       ) : (
-                        <ArrowDropDownIcon
-                          sx={{
-                            color: theme.palette.primary.main,
-                          }}
-                        />
+                        <ArrowDropDownIcon sx={{ color: "primary.main" }} />
                       )
                     }
                     sx={{
                       px: 0,
-                      minHeight: "48px",
+                      minHeight: 48,
                     }}
                   >
                     <MDTypography
                       variant="subtitle1"
                       sx={{
-                        color: theme.palette.text.secondary,
+                        color: "text.secondary",
                         fontWeight: 600,
                       }}
                     >
@@ -169,13 +148,7 @@ const WellnessSelector = () => {
                     </MDTypography>
                   </AccordionSummary>
 
-                  <AccordionDetails
-                    sx={{
-                      px: 0,
-                      pt: 0,
-                      pb: 2,
-                    }}
-                  >
+                  <AccordionDetails sx={{ px: 0, pt: 0, pb: 2 }}>
                     <Box
                       sx={{
                         display: "flex",
@@ -192,32 +165,31 @@ const WellnessSelector = () => {
                             label={item.name}
                             onClick={() => dispatch(toggleInterest(item.id))}
                             sx={{
-                              height: "34px",
+                              height: 34,
                               borderRadius: "100px",
                               border: "1px solid",
                               borderColor: isSelected
-                                ? theme.palette.primary.main
-                                : theme.palette.divider,
+                                ? "primary.main"
+                                : "divider",
 
                               bgcolor: isSelected
-                                ? `${theme.palette.primary.main} !important`
+                                ? "primary.main"
                                 : "transparent",
 
                               color: isSelected
-                                ? `${theme.palette.primary.contrastText} !important`
-                                : theme.palette.text.primary,
+                                ? "primary.contrastText"
+                                : "text.primary",
 
-                              cursor: "pointer",
                               fontSize: "0.8rem",
                               fontWeight: 500,
-                              transition: "all 0.15s ease",
+                              cursor: "pointer",
+                              transition: "0.15s ease",
 
                               "&:hover": {
-                                borderColor: theme.palette.primary.main,
-
+                                borderColor: "primary.main",
                                 bgcolor: isSelected
-                                  ? `${theme.palette.primary.dark} !important`
-                                  : `${theme.palette.primary.main}12 !important`,
+                                  ? "primary.dark"
+                                  : "primary.light",
                               },
 
                               "& .MuiChip-label": {
@@ -245,24 +217,16 @@ const WellnessSelector = () => {
           >
             <MDButton
               variant="outlined"
-              startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.8rem" }} />}
+              startIcon={<ArrowBackIosNewIcon sx={{ fontSize: 14 }} />}
               onClick={handleBack}
-              sx={{
-                width: "140px",
-                py: 1.25,
-              }}
             >
               Back
             </MDButton>
 
             <MDButton
               variant="contained"
-              disabled={selectedIds.length === 0}
+              disabled={!selectedIds.length}
               onClick={handleNext}
-              sx={{
-                width: "140px",
-                py: 1.25,
-              }}
             >
               Next
             </MDButton>

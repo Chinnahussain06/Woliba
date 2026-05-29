@@ -48,7 +48,7 @@ const registrationRoutes = [
   },
 
   {
-    path: "/register/wellness-condition",
+    path: "/register/wellness-selector",
     element: <WellnessSelector />,
     condition: selectOtpVerified,
     redirectTo: "/register/login-credentials",

@@ -3,18 +3,19 @@ import { useNavigate } from "react-router-dom";
 
 // MUI
 import { Box, Divider, useTheme } from "@mui/material";
-
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
-// Components
+// Layout
 import DashboardLayout from "@/src/layouts/DashboardLayout";
 import DashboardNavbar from "@/src/layouts/DashboardNavbar";
 import Footer from "@/src/layouts/Footer";
-import MDLoader from "@/src/components/MDLoader";
+
+// Components
+import MDFormCard from "@/src/components/MDFormCard";
 import MDTypography from "@/src/components/MDTypography";
 import MDButton from "@/src/components/MDButton";
-import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
+import MDLoader from "@/src/components/MDLoader";
 
 // Hooks
 import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
@@ -34,10 +35,8 @@ import {
   selectError,
 } from "@/src/redux/selectors/registrationSelectors";
 
-// Components
+// Skeleton
 import PillarsSkeleton from "./components/PillarsSkeleton";
-
-
 
 const WellbeingPillars = () => {
   const navigate = useNavigate();
@@ -49,11 +48,10 @@ const WellbeingPillars = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const pillars = useAppSelector(selectPillars) || [];
-  const pillarsLoading = useAppSelector(selectPillarsLoading);
+  const loading = useAppSelector(selectPillarsLoading);
   const apiError = useAppSelector(selectError);
 
   const selectedIds = useAppSelector(selectSelectedPillars);
-
   const payload = useAppSelector(selectRegistrationPayload);
 
   useEffect(() => {
@@ -64,7 +62,11 @@ const WellbeingPillars = () => {
     dispatch(togglePillar(id));
   };
 
-  const handleDone = async () => {
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleSubmit = async () => {
     if (selectedIds.length !== 3) return;
 
     setIsSubmitting(true);
@@ -101,11 +103,10 @@ const WellbeingPillars = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
+
       <Box
         component="main"
         sx={{
-          position: "relative",
-          zIndex: 10,
           flex: 1,
           display: "flex",
           alignItems: "center",
@@ -115,12 +116,12 @@ const WellbeingPillars = () => {
         }}
       >
         <MDFormCard
-          title="Select any 3 well-being pillars goal you want to achieve — at least one is required."
-          maxWidth="70%"
+          title="Select 3 well-being pillars you want to focus on"
+          maxWidth={{ xs: "100%", sm: "100%", md: "70%" }}
         >
           <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
-          {pillarsLoading ? (
+          {loading ? (
             <PillarsSkeleton />
           ) : (
             <Box
@@ -131,12 +132,11 @@ const WellbeingPillars = () => {
                   sm: "repeat(2, 1fr)",
                   md: "repeat(3, 1fr)",
                 },
-                gap: "12px",
+                gap: 1.5,
               }}
             >
               {pillars.map((item) => {
                 const isSelected = selectedIds.includes(item.id);
-
                 const rank = selectedIds.indexOf(item.id) + 1;
 
                 return (
@@ -144,80 +144,55 @@ const WellbeingPillars = () => {
                     key={item.id}
                     onClick={() => handleSelect(item.id)}
                     sx={{
-                      p: "25px 16px",
+                      p: "20px 16px",
                       borderRadius: "12px",
                       border: "1.5px solid",
+                      borderColor: isSelected ? "primary.main" : "divider",
 
-                      borderColor: isSelected
-                        ? theme.palette.primary.main
-                        : theme.palette.divider,
-
-                      bgcolor: theme.palette.background.paper,
-
+                      bgcolor: "background.paper",
                       cursor: "pointer",
 
-                      transition: "all 0.15s ease-in-out",
-
                       display: "flex",
-                      flexDirection: "row",
                       alignItems: "center",
-                      gap: "12px",
+                      gap: 1.5,
+
+                      transition: "0.15s ease",
 
                       "&:hover": {
                         boxShadow: `0 4px 12px ${theme.palette.primary.main}14`,
                       },
                     }}
                   >
-                    {/* Rank Badge */}
                     <Box
                       sx={{
                         width: 26,
                         height: 26,
-
                         borderRadius: "6px",
-
-                        bgcolor: isSelected
-                          ? theme.palette.primary.main
-                          : "transparent",
-
-                        border: "1.5px solid",
-
-                        borderColor: isSelected
-                          ? theme.palette.primary.main
-                          : theme.palette.divider,
-
-                        color: isSelected
-                          ? theme.palette.primary.contrastText
-                          : "transparent",
-
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
 
+                        border: "1.5px solid",
+                        borderColor: isSelected ? "primary.main" : "divider",
+
+                        bgcolor: isSelected ? "primary.main" : "transparent",
+
+                        color: isSelected
+                          ? "primary.contrastText"
+                          : "transparent",
+
                         fontWeight: 700,
                         fontSize: "0.8rem",
-
-                        flexShrink: 0,
-
-                        transition: "all 0.15s ease",
                       }}
                     >
                       {isSelected ? rank : ""}
                     </Box>
 
-                    {/* Pillar Info */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                        flex: 1,
-                      }}
-                    >
+                    <Box sx={{ flex: 1 }}>
                       <MDTypography
                         variant="body1"
                         sx={{
-                          color: theme.palette.secondary.main,
+                          color: "secondary.main",
                           fontWeight: 500,
                           lineHeight: 1.3,
                         }}
@@ -228,7 +203,7 @@ const WellbeingPillars = () => {
                       <MDTypography
                         variant="body2"
                         sx={{
-                          color: theme.palette.text.secondary,
+                          color: "text.secondary",
                           lineHeight: 1.5,
                         }}
                       >
@@ -252,12 +227,8 @@ const WellbeingPillars = () => {
           >
             <MDButton
               variant="outlined"
-              onClick={() => window.history.back()}
-              startIcon={<ArrowBackIosNewIcon sx={{ fontSize: "0.8rem" }} />}
-              sx={{
-                width: "160px",
-                py: 1.4,
-              }}
+              startIcon={<ArrowBackIosNewIcon sx={{ fontSize: 14 }} />}
+              onClick={handleBack}
             >
               Back
             </MDButton>
@@ -265,11 +236,7 @@ const WellbeingPillars = () => {
             <MDButton
               variant="contained"
               disabled={selectedIds.length !== 3}
-              onClick={handleDone}
-              sx={{
-                width: "160px",
-                py: 1.4,
-              }}
+              onClick={handleSubmit}
             >
               Done
             </MDButton>

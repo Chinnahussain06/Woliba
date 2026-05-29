@@ -25,6 +25,7 @@
     "formik": "^2.4.9",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
+    "react-error-boundary": "^6.1.2",
     "react-redux": "^9.3.0",
     "react-router-dom": "^7.15.1",
     "yup": "^1.7.1"

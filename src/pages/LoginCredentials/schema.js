@@ -82,7 +82,7 @@ export const InitialValues = {
   [agreeToTerms.name]: false,
 };
 
-export const loginCredentialsValidationSchema = Yup.object().shape({
+export const ValidationSchema = Yup.object().shape({
   [password.name]: getPasswordValidation(),
   [confirmPassword.name]: getConfirmPasswordValidation(password.name),
   [birthday.name]: Yup.string().required(birthday.errorMsg),

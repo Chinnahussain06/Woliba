@@ -8,6 +8,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
 import App from "./App.jsx";
+import AppErrorBoundary from "./AppErrorBoundary.jsx";
 
 import { store } from "./redux/store";
 import wolibaTheme from "./assets/theme";
@@ -23,9 +24,10 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <ThemeProvider theme={wolibaTheme}>
         <CssBaseline />
-
         <BrowserRouter>
-          <App />
+          <AppErrorBoundary>
+            <App />
+          </AppErrorBoundary>
         </BrowserRouter>
       </ThemeProvider>
     </Provider>
