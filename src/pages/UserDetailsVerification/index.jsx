@@ -1,4 +1,3 @@
-import React from "react";
 import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +9,7 @@ import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDFormField from "@/src/components/MDFormField";
 import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
+
 import DashboardLayout from "@/src/layouts/DashboardLayout";
 import DashboardNavbar from "@/src/layouts/DashboardNavbar";
 import Footer from "@/src/layouts/Footer";
@@ -33,12 +33,15 @@ import { form, initialValues, userDetailsValidationSchema } from "./schema";
 
 function UserDetailsVerification() {
   const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
 
   const isLoading = useAppSelector(selectIsLoading);
   const apiError = useAppSelector(selectError);
+
   const companyName = useAppSelector(selectCompanyName);
   const companyId = useAppSelector(selectCompanyId);
+
   const email = useAppSelector(selectEmail);
   const firstName = useAppSelector(selectFirstName);
   const lastName = useAppSelector(selectLastName);
@@ -47,16 +50,20 @@ function UserDetailsVerification() {
   const { emailId, firstName: fn, lastName: ln, companyName: cn } = formField;
 
   const handleSubmit = async (values) => {
-    await dispatch(
+    dispatch(clearError());
+
+    const result = await dispatch(
       saveUserDetails({
         company_id: companyId,
         mail: values.emailId,
         fname: values.firstName,
         lname: values.lastName,
       }),
-    ).unwrap();
+    );
 
-    navigate("/register/otp-verification");
+    if (saveUserDetails.fulfilled.match(result)) {
+      navigate("/register/otp-verification");
+    }
   };
 
   return (
@@ -66,8 +73,6 @@ function UserDetailsVerification() {
       <Box
         component="main"
         sx={{
-          position: "relative",
-          zIndex: 10,
           flex: 1,
           display: "flex",
           alignItems: "center",
@@ -76,7 +81,7 @@ function UserDetailsVerification() {
           py: 4,
         }}
       >
-        <MDFormCard title="Registration">
+        <MDFormCard title="Registration" subtitle="Enter your personal details">
           <MDAlert message={apiError} onClose={() => dispatch(clearError())} />
 
           <Formik
@@ -118,28 +123,20 @@ function UserDetailsVerification() {
                   label={cn.label}
                   name={cn.name}
                   disabled
-                  value={companyName}
                   required
                 />
 
-                <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: 3 }} />
 
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <MDLoadingButton
                     type="submit"
+                    variant="contained"
                     loading={isLoading}
+                    loadingText="Verifying..."
                     disabled={!isValid || isSubmitting}
-                    sx={{
-                      width: "100%",
-                      maxWidth: 220,
-                      py: 1.5,
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                      backgroundColor: "#D2686E",
-                      "&:hover": { backgroundColor: "#C2555B" },
-                    }}
                   >
-                    Verify email
+                    Verify Email
                   </MDLoadingButton>
                 </Box>
               </Form>

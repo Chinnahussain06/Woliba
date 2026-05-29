@@ -1,44 +1,32 @@
 const r = (s) => s.registration;
 
-//  Company verification
 export const selectCompanyId = (s) => r(s).companyId;
 export const selectCompanyName = (s) => r(s).companyName;
-
-// User Details verification
 export const selectEmail = (s) => r(s).email;
 export const selectFirstName = (s) => r(s).firstName;
 export const selectLastName = (s) => r(s).lastName;
-
-//  OTP verification
 export const selectOtpToken = (s) => r(s).otpToken;
 export const selectOtpVerified = (s) => r(s).otpVerified;
+export const selectRegistrationDeadline = (s) => r(s).registrationDeadline;
 
-//  Registration Timer
-export const selectRegistrationDeadline = (state) =>
-  state.registration.registrationDeadline;
-
-// Interests
 export const selectInterests = (s) => r(s).interests;
-export const selectAllInterests = (s) => r(s).interests;
 export const selectSelectedInterests = (s) => r(s).selectedInterests;
 export const selectInterestsStatus = (s) => r(s).status;
 
-//  Pillars
 export const selectPillars = (s) => r(s).pillars;
 export const selectSelectedPillars = (s) => r(s).selectedPillars;
 export const selectPillarsLoading = (s) => r(s).status === "loading";
 
-//  Completion
 export const selectAuthToken = (s) => r(s).authToken;
 export const selectRegistrationComplete = (s) => r(s).registrationComplete;
 
-//  Async State
 export const selectStatus = (s) => r(s).status;
 export const selectResendStatus = (s) => r(s).resendStatus;
-export const selectError = (s) => r(s).error;
 export const selectIsLoading = (s) => r(s).status === "loading";
+export const selectError = (s) => r(s).error;
+export const selectResendError = (s) => r(s).resendError;
+export const selectIsResendLoading = (s) => r(s).resendStatus === "loading";
 
-// ── Payload (for final registration API) ─────
 export const selectRegistrationPayload = (s) => ({
   fname: r(s).firstName,
   lname: r(s).lastName,

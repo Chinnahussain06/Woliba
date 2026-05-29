@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import {
-  Box,
-  InputAdornment,
-  IconButton,
-  Divider,
-  useTheme,
-} from "@mui/material";
+import { Box, InputAdornment, IconButton, Divider } from "@mui/material";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
 
@@ -32,10 +26,9 @@ import {
 } from "@/src/redux/selectors/registrationSelectors";
 
 // Schema
-import { form, initialValues, companyValidations } from "./schema";
+import { form, initialValues, validationSchema } from "./schema";
 
 function CompanyVerification() {
-  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -44,24 +37,17 @@ function CompanyVerification() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    return () => {
-      dispatch(clearError());
-    };
-  }, [dispatch]);
-
   const handleSubmit = async (values) => {
-    try {
-      await dispatch(
-        verifyCompany({
-          company_name: values.companyName,
-          password: values.companyPassword,
-        }),
-      ).unwrap();
+    dispatch(clearError());
+    const resultAction = await dispatch(
+      verifyCompany({
+        company_name: values.companyName,
+        password: values.companyPassword,
+      }),
+    );
 
+    if (verifyCompany.fulfilled.match(resultAction)) {
       navigate("/register/user-details-verification");
-    } catch (err) {
-      console.error("Company Verification Failed:", err);
     }
   };
 
@@ -76,8 +62,6 @@ function CompanyVerification() {
       <Box
         component="main"
         sx={{
-          position: "relative",
-          zIndex: 10,
           flex: 1,
           display: "flex",
           alignItems: "center",
@@ -91,10 +75,10 @@ function CompanyVerification() {
 
           <Formik
             initialValues={initialValues}
-            validationSchema={companyValidations[0]}
+            validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting, dirty }) => (
+            {({ isSubmitting, isValid }) => (
               <Form>
                 <MDFormField
                   label={companyNameField.label}
@@ -115,7 +99,7 @@ function CompanyVerification() {
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
-                          sx={{ color: theme.palette.primary.main }}
+                          sx={{ color: "primary.main" }}
                         >
                           {showPassword ? (
                             <VisibilityOutlined />
@@ -134,8 +118,8 @@ function CompanyVerification() {
                   <MDLoadingButton
                     type="submit"
                     loading={isLoading}
-                    disabled={isSubmitting || !dirty}
-                    sx={{ width: "100%", maxWidth: "190px" }}
+                    loadingText="Verifying..."
+                    disabled={!isValid || isSubmitting || isLoading}
                   >
                     Next
                   </MDLoadingButton>

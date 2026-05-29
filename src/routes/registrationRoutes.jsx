@@ -1,12 +1,13 @@
-import React, { lazy } from "react";
+import { lazy } from "react";
 
+// Selectors
 import {
   selectCompanyId,
   selectOtpVerified,
   selectRegistrationComplete,
 } from "../redux/selectors/registrationSelectors";
 
-// Lazy Pages
+// Registration Pages
 const CompanyVerificationPage = lazy(
   () => import("../pages/CompanyVerification"),
 );
@@ -23,55 +24,48 @@ const registrationRoutes = [
   {
     path: "/register/company-verification",
     element: <CompanyVerificationPage />,
-    requiresGuard: false,
   },
 
   {
     path: "/register/user-details-verification",
     element: <UserDetailsVerificationPage />,
-    selector: selectCompanyId,
+    condition: selectCompanyId,
     redirectTo: "/register/company-verification",
-    requiresGuard: true,
   },
 
   {
     path: "/register/otp-verification",
     element: <OtpVerificationPage />,
-    selector: selectCompanyId,
+    condition: selectCompanyId,
     redirectTo: "/register/company-verification",
-    requiresGuard: true,
   },
 
   {
     path: "/register/login-credentials",
     element: <LoginCredentialsPage />,
-    selector: selectOtpVerified,
+    condition: selectOtpVerified,
     redirectTo: "/register/otp-verification",
-    requiresGuard: true,
   },
 
   {
-    path: "/register/wellness-selector",
+    path: "/register/wellness-condition",
     element: <WellnessSelector />,
-    selector: selectOtpVerified,
+    condition: selectOtpVerified,
     redirectTo: "/register/login-credentials",
-    requiresGuard: true,
   },
 
   {
     path: "/register/wellbeing-pillars",
     element: <WellbeingPillars />,
-    selector: selectOtpVerified,
+    condition: selectOtpVerified,
     redirectTo: "/register/login-credentials",
-    requiresGuard: true,
   },
 
   {
     path: "/welcome",
     element: <WelcomePage />,
-    selector: selectRegistrationComplete,
+    condition: selectRegistrationComplete,
     redirectTo: "/register/company-verification",
-    requiresGuard: true,
   },
 ];
 

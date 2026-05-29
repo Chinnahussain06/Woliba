@@ -1,9 +1,11 @@
 import React from "react";
+
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 
 export default function MDButton({
   variant = "contained",
+  size = "medium",
   children,
   sx = {},
   ...rest
@@ -18,6 +20,7 @@ export default function MDButton({
           backgroundColor: palette.primary.main,
           color: palette.primary.contrastText,
           fontWeight: 600,
+
           boxShadow: `0px 4px 10px ${palette.primary.main}25`,
 
           "&.Mui-disabled": {
@@ -73,10 +76,11 @@ export default function MDButton({
   return (
     <Button
       variant={variant}
+      size={size}
       sx={{
         fontFamily: "Lato, sans-serif",
         textTransform: "none",
-        borderRadius: "8px",
+        borderRadius: 2,
         transition: "all 0.25s ease-in-out",
         fontSize: "0.875rem",
         ...getVariantStyles(),
