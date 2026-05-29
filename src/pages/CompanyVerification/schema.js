@@ -6,8 +6,8 @@ export const form = {
   formId: "company-verification-form",
 
   formField: {
-    companyName: {
-      name: "companyName",
+    company_name: {
+      name: "company_name",
       label: "Company Name",
       placeholder: "Enter company name",
       type: "text",
@@ -15,8 +15,8 @@ export const form = {
       required: true,
     },
 
-    companyPassword: {
-      name: "companyPassword",
+    password: {
+      name: "password",
       label: "Company Password",
       placeholder: "Enter company password",
       type: "password",
@@ -27,18 +27,18 @@ export const form = {
 };
 
 const {
-  formField: { companyName, companyPassword },
+  formField: { company_name, password },
 } = form;
 
 export const initialValues = {
-  [companyName.name]: "",
-  [companyPassword.name]: "",
+  [company_name.name]: "",
+  [password.name]: "",
 };
 
 export const validationSchema = Yup.object({
-  [companyName.name]: Yup.string()
+  [company_name.name]: Yup.string()
     .min(3, "Name must be at least 3 characters")
-    .required(companyName.errorMsg),
+    .required(company_name.errorMsg),
 
-  [companyPassword.name]: getPasswordValidation(),
+  [password.name]: getPasswordValidation(),
 });

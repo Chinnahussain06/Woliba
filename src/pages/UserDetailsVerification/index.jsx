@@ -18,12 +18,13 @@ import Footer from "@/src/layouts/Footer";
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
 import { saveUserDetails } from "@/src/redux/thunks/registrationThunks";
 import { clearError } from "@/src/redux/slices/registrationSlice";
+
 import {
   selectIsLoading,
   selectError,
   selectCompanyName,
   selectCompanyId,
-  selectEmail,
+  selectMail,
   selectFirstName,
   selectLastName,
 } from "@/src/redux/selectors/registrationSelectors";
@@ -42,22 +43,21 @@ function UserDetailsVerification() {
   const companyName = useAppSelector(selectCompanyName);
   const companyId = useAppSelector(selectCompanyId);
 
-  const email = useAppSelector(selectEmail);
+  const email = useAppSelector(selectMail);
   const firstName = useAppSelector(selectFirstName);
   const lastName = useAppSelector(selectLastName);
 
   const { formField } = form;
-  const { emailId, firstName: fn, lastName: ln, companyName: cn } = formField;
+
+  const { mail, fname, lname, company_name } = formField;
 
   const handleSubmit = async (values) => {
     dispatch(clearError());
 
     const result = await dispatch(
       saveUserDetails({
+        ...values,
         company_id: companyId,
-        mail: values.emailId,
-        fname: values.firstName,
-        lname: values.lastName,
       }),
     );
 
@@ -87,10 +87,10 @@ function UserDetailsVerification() {
           <Formik
             initialValues={{
               ...initialValues,
-              emailId: email || "",
-              firstName: firstName || "",
-              lastName: lastName || "",
-              companyName: companyName || "",
+              mail: email || "",
+              fname: firstName || "",
+              lname: lastName || "",
+              company_name: companyName || "",
             }}
             validationSchema={userDetailsValidationSchema}
             onSubmit={handleSubmit}
@@ -99,36 +99,41 @@ function UserDetailsVerification() {
             {({ isValid, isSubmitting }) => (
               <Form>
                 <MDFormField
-                  label={emailId.label}
-                  name={emailId.name}
-                  placeholder={emailId.placeholder}
+                  label={mail.label}
+                  name={mail.name}
+                  placeholder={mail.placeholder}
                   required
                 />
 
                 <MDFormField
-                  label={fn.label}
-                  name={fn.name}
-                  placeholder={fn.placeholder}
+                  label={fname.label}
+                  name={fname.name}
+                  placeholder={fname.placeholder}
                   required
                 />
 
                 <MDFormField
-                  label={ln.label}
-                  name={ln.name}
-                  placeholder={ln.placeholder}
+                  label={lname.label}
+                  name={lname.name}
+                  placeholder={lname.placeholder}
                   required
                 />
 
                 <MDFormField
-                  label={cn.label}
-                  name={cn.name}
+                  label={company_name.label}
+                  name={company_name.name}
                   disabled
                   required
                 />
 
                 <Divider sx={{ my: 3 }} />
 
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
                   <MDLoadingButton
                     type="submit"
                     variant="contained"

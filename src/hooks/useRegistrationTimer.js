@@ -5,14 +5,14 @@ import { resendOtp } from "@/src/redux/thunks/registrationThunks";
 import { clearRegistrationDeadline } from "@/src/redux/slices/registrationSlice";
 import {
   selectRegistrationDeadline,
-  selectEmail,
+  selectMail,
 } from "@/src/redux/selectors/registrationSelectors";
 
 export const useRegistrationTimer = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const deadline = useAppSelector(selectRegistrationDeadline);
-  const email = useAppSelector(selectEmail);
+  const email = useAppSelector(selectMail);
 
   useEffect(() => {
     if (!deadline) return;

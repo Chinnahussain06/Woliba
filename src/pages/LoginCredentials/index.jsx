@@ -26,6 +26,7 @@ import MDDatePicker from "@/src/components/MDDatePicker";
 import MDButton from "@/src/components/MDButton";
 import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
+
 import DashboardLayout from "@/src/layouts/DashboardLayout";
 import DashboardNavbar from "@/src/layouts/DashboardNavbar";
 import Footer from "@/src/layouts/Footer";
@@ -34,20 +35,20 @@ import { useRegistrationTimer } from "@/src/hooks/useRegistrationTimer";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
+
 import {
   clearError,
   setPassword,
-  setDob,
-  setPhone,
-  setWorkAnniversary,
-  setAcceptedPolicy,
+  setBirthday,
+  setPhoneNumber,
+  setAcceptedPrivacyPolicy,
 } from "@/src/redux/slices/registrationSlice";
+
 import {
   selectError,
   selectPassword,
-  selectDob,
+  selectBirthday,
   selectPhoneNumber,
-  selectWorkAnniversary,
   selectAcceptedPrivacyPolicy,
 } from "@/src/redux/selectors/registrationSelectors";
 
@@ -62,11 +63,9 @@ function LoginCredentials() {
   useRegistrationTimer();
 
   const apiError = useAppSelector(selectError);
-
   const passwordValue = useAppSelector(selectPassword);
-  const dobValue = useAppSelector(selectDob);
-  const phoneValue = useAppSelector(selectPhoneNumber);
-  const workAnniversaryValue = useAppSelector(selectWorkAnniversary);
+  const birthdayValue = useAppSelector(selectBirthday);
+  const phoneValue = useAppSelector(selectPhoneNumber)
   const acceptedPolicyValue = useAppSelector(selectAcceptedPrivacyPolicy);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -75,30 +74,27 @@ function LoginCredentials() {
   const {
     formField: {
       password,
-      confirmPassword,
+      confirm_password,
       birthday,
-      contactNumber,
-      workAnniversary,
-      agreeToTerms,
+      phone_number,
+      accepted_privacy_policy,
     },
   } = form;
 
   const formInitialValues = {
     ...InitialValues,
     password: passwordValue || "",
-    confirmPassword: passwordValue || "",
-    birthday: dobValue || null,
-    contactNumber: phoneValue || "",
-    workAnniversary: workAnniversaryValue || null,
-    agreeToTerms: acceptedPolicyValue || false,
+    confirm_password: passwordValue || "",
+    birthday: birthdayValue || null,
+    phone_number: phoneValue || "",
+    accepted_privacy_policy: acceptedPolicyValue || false,
   };
 
   const handleSubmit = (values) => {
     dispatch(setPassword(values[password.name]));
-    dispatch(setDob(values[birthday.name]));
-    dispatch(setPhone(values[contactNumber.name]));
-    dispatch(setWorkAnniversary(values[workAnniversary.name] || null));
-    dispatch(setAcceptedPolicy(values[agreeToTerms.name]));
+    dispatch(setBirthday(values[birthday.name]));
+    dispatch(setPhoneNumber(values[phone_number.name]));
+    dispatch(setAcceptedPrivacyPolicy(values[accepted_privacy_policy.name]));
 
     navigate("/register/wellness-selector");
   };
@@ -155,10 +151,10 @@ function LoginCredentials() {
                 />
 
                 <MDFormField
-                  label={confirmPassword.label}
-                  name={confirmPassword.name}
+                  label={confirm_password.label}
+                  name={confirm_password.name}
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder={confirmPassword.placeholder}
+                  placeholder={confirm_password.placeholder}
                   required
                   InputProps={{
                     endAdornment: (
@@ -187,29 +183,28 @@ function LoginCredentials() {
                 />
 
                 <MDFormField
-                  label={contactNumber.label}
-                  name={contactNumber.name}
-                  placeholder={contactNumber.placeholder}
+                  label={phone_number.label}
+                  name={phone_number.name}
+                  placeholder={phone_number.placeholder}
                   required
                 />
 
-                <MDDatePicker
-                  label={workAnniversary.label}
-                  name={workAnniversary.name}
-                  placeholder={workAnniversary.placeholder}
-                  seconds={values[workAnniversary.name]}
-                  onChange={(value) =>
-                    setFieldValue(workAnniversary.name, value)
-                  }
-                />
-
-                <Box sx={{ display: "flex", mt: 2, mb: 3 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    mt: 2,
+                    mb: 3,
+                  }}
+                >
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={values[agreeToTerms.name]}
+                        checked={values[accepted_privacy_policy.name]}
                         onChange={(e) =>
-                          setFieldValue(agreeToTerms.name, e.target.checked)
+                          setFieldValue(
+                            accepted_privacy_policy.name,
+                            e.target.checked,
+                          )
                         }
                         sx={{
                           "& .MuiSvgIcon-root": {
@@ -258,7 +253,13 @@ function LoginCredentials() {
 
                 <Divider sx={{ my: 3 }} />
 
-                <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    justifyContent: "center",
+                  }}
+                >
                   <MDButton
                     variant="outlined"
                     onClick={handleBack}

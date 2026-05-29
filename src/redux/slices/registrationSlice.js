@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import {
   verifyCompany,
   saveUserDetails,
@@ -12,28 +13,44 @@ import {
 const OTP_EXPIRY_TIME = 10 * 60 * 1000;
 
 const initialState = {
+  // COMPANY DETAILS
   companyId: null,
-  companyName: "",
-  email: "",
-  firstName: "",
-  lastName: "",
+  company_name: "",
+
+  // USER DETAILS
+  mail: "",
+  fname: "",
+  lname: "",
+
+  // OTP DETAILS
   otpToken: null,
   otpVerified: false,
   registrationDeadline: null,
+
+  // LOGIN CREDENTIALS
   password: "",
-  dob: "",
-  phone: "",
-  workAnniversary: "",
-  acceptedPolicy: false,
+  birthday: "",
+  phone_number: "",
+  accepted_privacy_policy: false,
+
+  // INTERESTS
   interests: [],
   selectedInterests: [],
+
+  // PILLARS
   pillars: [],
   selectedPillars: [],
+
   authToken: null,
+
   registrationComplete: false,
+
   status: "idle",
+
   resendStatus: "idle",
+
   error: null,
+
   resendError: null,
 };
 
@@ -44,6 +61,7 @@ const onPending = (state) => {
 
 const onRejected = (state, { payload }) => {
   state.status = "failed";
+
   if (typeof payload === "string") {
     state.error = payload;
   } else if (payload?.message) {
@@ -55,35 +73,40 @@ const onRejected = (state, { payload }) => {
 
 const registrationSlice = createSlice({
   name: "registration",
+
   initialState,
 
   reducers: {
     setCompanyName: (state, { payload }) => {
-      state.companyName = payload;
+      state.company_name = payload;
     },
-    setEmail: (state, { payload }) => {
-      state.email = payload;
+
+    setMail: (state, { payload }) => {
+      state.mail = payload;
     },
+
     setFirstName: (state, { payload }) => {
-      state.firstName = payload;
+      state.fname = payload;
     },
+
     setLastName: (state, { payload }) => {
-      state.lastName = payload;
+      state.lname = payload;
     },
+
     setPassword: (state, { payload }) => {
       state.password = payload;
     },
-    setDob: (state, { payload }) => {
-      state.dob = payload;
+
+    setBirthday: (state, { payload }) => {
+      state.birthday = payload;
     },
-    setPhone: (state, { payload }) => {
-      state.phone = payload;
+
+    setPhoneNumber: (state, { payload }) => {
+      state.phone_number = payload;
     },
-    setWorkAnniversary: (state, { payload }) => {
-      state.workAnniversary = payload;
-    },
-    setAcceptedPolicy: (state, { payload }) => {
-      state.acceptedPolicy = payload;
+
+    setAcceptedPrivacyPolicy: (state, { payload }) => {
+      state.accepted_privacy_policy = payload;
     },
 
     toggleInterest: (state, { payload }) => {
@@ -113,7 +136,9 @@ const registrationSlice = createSlice({
 
     resetRegistration: (state) => ({
       ...initialState,
+
       interests: state.interests,
+
       pillars: state.pillars,
     }),
 
@@ -128,69 +153,110 @@ const registrationSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+
+      // VERIFY COMPANY
       .addCase(verifyCompany.pending, onPending)
+
       .addCase(verifyCompany.rejected, onRejected)
+
       .addCase(verifyCompany.fulfilled, (state, { payload }) => {
         const company = payload?.data?.[0];
+
         state.status = "success";
+
         state.companyId = company?.id ?? null;
-        state.companyName = company?.company_name ?? "";
+
+        state.company_name = company?.company_name ?? "";
       })
 
+      // SAVE USER DETAILS
       .addCase(saveUserDetails.pending, onPending)
+
       .addCase(saveUserDetails.rejected, onRejected)
+
       .addCase(saveUserDetails.fulfilled, (state, { payload, meta }) => {
         state.status = "success";
+
         state.otpToken = payload?.data?.token ?? null;
-        state.email = meta.arg.mail;
-        state.firstName = meta.arg.fname;
-        state.lastName = meta.arg.lname;
+
+        state.mail = meta.arg.mail;
+
+        state.fname = meta.arg.fname;
+
+        state.lname = meta.arg.lname;
       })
 
+      // VERIFY OTP
       .addCase(verifyOtp.pending, onPending)
+
       .addCase(verifyOtp.rejected, onRejected)
+
       .addCase(verifyOtp.fulfilled, (state) => {
         state.status = "success";
+
         state.otpVerified = true;
+
         state.registrationDeadline = Date.now() + OTP_EXPIRY_TIME;
       })
 
+      // RESEND OTP
       .addCase(resendOtp.pending, (state) => {
         state.resendStatus = "loading";
+
         state.resendError = null;
       })
+
       .addCase(resendOtp.rejected, (state, { payload }) => {
         state.resendStatus = "failed";
+
         state.resendError =
           typeof payload === "string" ? payload : "Failed to resend OTP";
       })
+
       .addCase(resendOtp.fulfilled, (state, { payload }) => {
         state.resendStatus = "success";
+
         state.resendError = null;
+
         state.otpToken = payload?.data?.token ?? null;
+
         state.registrationDeadline = null;
       })
 
+      // FETCH INTERESTS
       .addCase(fetchInterests.pending, onPending)
+
       .addCase(fetchInterests.rejected, onRejected)
+
       .addCase(fetchInterests.fulfilled, (state, { payload }) => {
         state.status = "success";
+
         state.interests = payload ?? [];
       })
 
+      // FETCH PILLARS
       .addCase(fetchPillars.pending, onPending)
+
       .addCase(fetchPillars.rejected, onRejected)
+
       .addCase(fetchPillars.fulfilled, (state, { payload }) => {
         state.status = "success";
+
         state.pillars = payload ?? [];
       })
 
+      // SUBMIT REGISTRATION
       .addCase(submitRegistration.pending, onPending)
+
       .addCase(submitRegistration.rejected, onRejected)
+
       .addCase(submitRegistration.fulfilled, (state, { payload }) => {
         state.status = "success";
+
         state.authToken = payload?.data?.token ?? null;
+
         state.registrationComplete = true;
+
         state.registrationDeadline = null;
       });
   },
@@ -198,14 +264,13 @@ const registrationSlice = createSlice({
 
 export const {
   setCompanyName,
-  setEmail,
+  setMail,
   setFirstName,
   setLastName,
   setPassword,
-  setDob,
-  setPhone,
-  setWorkAnniversary,
-  setAcceptedPolicy,
+  setBirthday,
+  setPhoneNumber,
+  setAcceptedPrivacyPolicy,
   toggleInterest,
   togglePillar,
   clearError,

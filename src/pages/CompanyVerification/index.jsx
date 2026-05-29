@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
@@ -12,14 +12,18 @@ import MDLoadingButton from "@/src/components/MDLoadingButton";
 import MDFormField from "@/src/components/MDFormField";
 import MDFormCard from "@/src/components/MDFormCard";
 import MDAlert from "@/src/components/MDAlert";
+
 import DashboardLayout from "@/src/layouts/DashboardLayout";
 import DashboardNavbar from "@/src/layouts/DashboardNavbar";
 import Footer from "@/src/layouts/Footer";
 
 // Redux
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
+
 import { clearError } from "@/src/redux/slices/registrationSlice";
+
 import { verifyCompany } from "@/src/redux/thunks/registrationThunks";
+
 import {
   selectIsLoading,
   selectError,
@@ -30,6 +34,7 @@ import { form, initialValues, validationSchema } from "./schema";
 
 function CompanyVerification() {
   const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
 
   const isLoading = useAppSelector(selectIsLoading);
@@ -37,23 +42,19 @@ function CompanyVerification() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const { formField } = form;
+
+  const { company_name, password } = formField;
+
   const handleSubmit = async (values) => {
     dispatch(clearError());
-    const resultAction = await dispatch(
-      verifyCompany({
-        company_name: values.companyName,
-        password: values.companyPassword,
-      }),
-    );
+
+    const resultAction = await dispatch(verifyCompany(values));
 
     if (verifyCompany.fulfilled.match(resultAction)) {
       navigate("/register/user-details-verification");
     }
   };
-
-  const { formField } = form;
-  const { companyName: companyNameField, companyPassword: passwordField } =
-    formField;
 
   return (
     <DashboardLayout>
@@ -81,17 +82,17 @@ function CompanyVerification() {
             {({ isSubmitting, isValid }) => (
               <Form>
                 <MDFormField
-                  label={companyNameField.label}
-                  name={companyNameField.name}
-                  placeholder={companyNameField.placeholder}
+                  label={company_name.label}
+                  name={company_name.name}
+                  placeholder={company_name.placeholder}
                   required
                 />
 
                 <MDFormField
-                  label={passwordField.label}
-                  name={passwordField.name}
+                  label={password.label}
+                  name={password.name}
                   type={showPassword ? "text" : "password"}
-                  placeholder={passwordField.placeholder}
+                  placeholder={password.placeholder}
                   required
                   InputProps={{
                     endAdornment: (
@@ -114,7 +115,12 @@ function CompanyVerification() {
 
                 <Divider sx={{ my: 3 }} />
 
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
                   <MDLoadingButton
                     type="submit"
                     loading={isLoading}

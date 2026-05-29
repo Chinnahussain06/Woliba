@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+
 import {
   getPasswordValidation,
   getConfirmPasswordValidation,
@@ -6,6 +7,7 @@ import {
 
 export const form = {
   formId: "login-credentials-form",
+
   formField: {
     password: {
       name: "password",
@@ -16,8 +18,8 @@ export const form = {
       errorMsg: "Password is required.",
     },
 
-    confirmPassword: {
-      name: "confirmPassword",
+    confirm_password: {
+      name: "confirm_password",
       label: "Confirm Password",
       placeholder: "Confirm password",
       type: "password",
@@ -34,26 +36,17 @@ export const form = {
       errorMsg: "Birthday is required.",
     },
 
-    contactNumber: {
-      name: "contactNumber",
+    phone_number: {
+      name: "phone_number",
       label: "Phone Number",
       placeholder: "Enter phone number",
       type: "text",
       required: true,
-      errorMsg: "Contact number is required.",
+      errorMsg: "Phone number is required.",
     },
 
-    workAnniversary: {
-      name: "workAnniversary",
-      label: "Work Anniversary",
-      placeholder: "Select work anniversary(YYYY-MM-DD)",
-      type: "date",
-      required: false,
-      errorMsg: "Work anniversary is required.",
-    },
-
-    agreeToTerms: {
-      name: "agreeToTerms",
+    accepted_privacy_policy: {
+      name: "accepted_privacy_policy",
       label: "Terms & Privacy Policy",
       placeholder: "I agree to the Terms and Privacy Policy",
       required: true,
@@ -65,35 +58,33 @@ export const form = {
 const {
   formField: {
     password,
-    confirmPassword,
+    confirm_password,
     birthday,
-    contactNumber,
-    workAnniversary,
-    agreeToTerms,
+    phone_number,
+    accepted_privacy_policy,
   },
 } = form;
 
 export const InitialValues = {
   [password.name]: "",
-  [confirmPassword.name]: "",
+  [confirm_password.name]: "",
   [birthday.name]: null,
-  [contactNumber.name]: "",
-  [workAnniversary.name]: null,
-  [agreeToTerms.name]: false,
+  [phone_number.name]: "",
+  [accepted_privacy_policy.name]: false,
 };
 
 export const ValidationSchema = Yup.object().shape({
   [password.name]: getPasswordValidation(),
-  [confirmPassword.name]: getConfirmPasswordValidation(password.name),
+
+  [confirm_password.name]: getConfirmPasswordValidation(password.name),
+
   [birthday.name]: Yup.string().required(birthday.errorMsg),
 
-  [contactNumber.name]: Yup.string()
+  [phone_number.name]: Yup.string()
     .matches(/^[0-9]{10}$/, "Enter valid 10 digit mobile number")
-    .required(contactNumber.errorMsg),
+    .required(phone_number.errorMsg),
 
-  [workAnniversary.name]: Yup.string().nullable(),
-
-  [agreeToTerms.name]: Yup.boolean()
+  [accepted_privacy_policy.name]: Yup.boolean()
     .oneOf([true], "You must agree to Terms and Privacy Policy")
-    .required(agreeToTerms.errorMsg),
+    .required(accepted_privacy_policy.errorMsg),
 });

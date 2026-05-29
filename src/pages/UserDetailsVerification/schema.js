@@ -3,9 +3,10 @@ import { getEmailValidation, getNameValidation } from "@/src/utils/validator";
 
 export const form = {
   formId: "user-details-verification-form",
+
   formField: {
-    emailId: {
-      name: "emailId",
+    mail: {
+      name: "mail",
       label: "Email ID",
       placeholder: "Enter email id",
       type: "email",
@@ -13,8 +14,8 @@ export const form = {
       required: true,
     },
 
-    firstName: {
-      name: "firstName",
+    fname: {
+      name: "fname",
       label: "First name",
       placeholder: "Enter first name",
       type: "text",
@@ -22,8 +23,8 @@ export const form = {
       required: true,
     },
 
-    lastName: {
-      name: "lastName",
+    lname: {
+      name: "lname",
       label: "Last name",
       placeholder: "Enter last name",
       type: "text",
@@ -31,8 +32,8 @@ export const form = {
       required: true,
     },
 
-    companyName: {
-      name: "companyName",
+    company_name: {
+      name: "company_name",
       label: "Company name",
       type: "text",
       required: true,
@@ -42,22 +43,22 @@ export const form = {
 };
 
 const {
-  formField: { emailId, firstName, lastName, companyName },
+  formField: { mail, fname, lname, company_name },
 } = form;
 
 export const initialValues = {
-  [emailId.name]: "",
-  [firstName.name]: "",
-  [lastName.name]: "",
-  [companyName.name]: "",
+  [mail.name]: "",
+  [fname.name]: "",
+  [lname.name]: "",
+  [company_name.name]: "",
 };
 
 export const userDetailsValidationSchema = Yup.object().shape({
-  [emailId.name]: getEmailValidation(),
+  [mail.name]: getEmailValidation(),
 
-  [firstName.name]: getNameValidation(),
+  [fname.name]: getNameValidation(),
 
-  [lastName.name]: getNameValidation(),
+  [lname.name]: getNameValidation(),
 
-  [companyName.name]: Yup.string().required("Company name is required"),
+  [company_name.name]: Yup.string().required("Company name is required"),
 });

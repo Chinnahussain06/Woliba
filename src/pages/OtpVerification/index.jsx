@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
 import { verifyOtp, resendOtp } from "@/src/redux/thunks/registrationThunks";
 import { clearError } from "@/src/redux/slices/registrationSlice";
 import {
-  selectEmail,
+  selectMail,
   selectOtpToken,
   selectStatus,
   selectResendStatus,
@@ -34,7 +34,7 @@ function OtpVerification() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const email = useAppSelector(selectEmail);
+  const email = useAppSelector(selectMail);
   const otpToken = useAppSelector(selectOtpToken);
   const apiError = useAppSelector(selectError);
   const status = useAppSelector(selectStatus);
