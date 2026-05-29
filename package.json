@@ -9,7 +9,8 @@
     "dev": "vite",
     "build": "vite build",
     "clean": "rimraf dist",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -34,6 +35,8 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^5.0.4",
+    "@vitest/coverage-v8": "^4.1.7",
+    "@vitest/ui": "^4.1.7",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "rimraf": "^6.0.1",

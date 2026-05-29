@@ -174,7 +174,7 @@ The onboarding is a strictly ordered, 7-step flow. Each step is guarded — user
         ↓  Company ID confirmed
 /register/user-details-verification    (Step 2 — requires: companyId)
         ↓  OTP dispatched to email
-/register/otp-verification             (Step 3 — requires: companyId)
+/register/otp-verification             (Step 3 — requires: email)
         ↓  OTP verified; 10-min timer starts
 /register/login-credentials            (Step 4 — requires: otpVerified)
         ↓
@@ -260,7 +260,6 @@ DISABLE_HMR=true npm run dev
 | `npm run lint`  | Run ESLint across `src/`              |
 | `npm test`      | Run unit tests with Vitest            |
 
-> **Note:** `test:ui` and `test:coverage` scripts are not currently defined in `package.json`. Add them if needed:
 >
 > ```json
 > "test:ui": "vitest --ui",
@@ -273,11 +272,11 @@ DISABLE_HMR=true npm run dev
 
 All registration state lives in a single Redux slice (`registrationSlice`). The slice tracks:
 
-- **Company**: `companyId`, `companyName`
-- **User details**: `email`, `firstName`, `lastName`
+- **Company**: `companyId`, `company_Name`
+- **User details**: `email`, `fName`, `lName`
 - **OTP**: `otpToken`, `otpVerified`
 - **Session timer**: `registrationDeadline` (Unix timestamp, 10 minutes from OTP verification; reset to `null` on OTP resend or registration complete)
-- **Profile**: `password`, `dob`, `phone`, `workAnniversary`, `acceptedPolicy`
+- **Profile**: `password`, `birthday`, `phone_number`, `accepted_privacy_policy`
 - **Wellness interests**: `interests` (all), `selectedInterests` (user picks — unlimited)
 - **Wellbeing pillars**: `pillars` (all), `selectedPillars` (user picks, max 3)
 - **Completion**: `authToken`, `registrationComplete`
@@ -327,8 +326,6 @@ All HTTP calls go through a shared Axios instance (`src/redux/api/api.js`). Asyn
 Route protection is handled by a single **`RouteGuard`** component (`src/routes/RouteGuard.jsx`). Each route in `registrationRoutes.jsx` can declare an optional `condition` (a Redux selector) and a `redirectTo` path. `RouteGuard` calls `useAppSelector(condition)` and redirects if the result is falsy. Routes without a `condition` (currently only Step 1) are always accessible.
 
 All pages are **lazy-loaded** via `React.lazy` and `Suspense`, with a full-screen `MDLoader` as the fallback while the chunk is loading.
-
-> **Note:** The previous `guards/` directory (with `RegistrationGuard` and `StepGuard`) has been consolidated into `src/routes/RouteGuard.jsx`. The README section referring to those files is now updated accordingly.
 
 ---
 
@@ -380,8 +377,6 @@ npm test
 | File                                         | What is tested                                                    |
 | -------------------------------------------- | ----------------------------------------------------------------- |
 | `src/redux/slices/registrationSlice.test.js` | Pillar limit enforcement (max 3), error clearing via `clearError` |
-
-> **Note:** The README previously listed test files for `registrationThunks`, `StepGuard`, and `useRegistrationTimer`. Only `registrationSlice.test.js` currently exists in the repository. Add test files as coverage expands.
 
 ### Suggested Test Structure
 

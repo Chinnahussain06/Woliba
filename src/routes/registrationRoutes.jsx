@@ -3,6 +3,7 @@ import { lazy } from "react";
 // Selectors
 import {
   selectCompanyId,
+  selectMail,
   selectOtpVerified,
   selectRegistrationComplete,
 } from "../redux/selectors/registrationSelectors";
@@ -36,7 +37,7 @@ const registrationRoutes = [
   {
     path: "/register/otp-verification",
     element: <OtpVerificationPage />,
-    condition: selectCompanyId,
+    condition: selectMail,
     redirectTo: "/register/company-verification",
   },
 
