@@ -100,7 +100,7 @@ function LoginCredentials() {
   };
 
   const handleBack = () => {
-    navigate("/register/personal-info");
+    navigate("/register/login-credentials");
   };
 
   return (
